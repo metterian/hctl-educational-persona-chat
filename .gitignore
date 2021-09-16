@@ -1,0 +1,15 @@
+.vscode
+experiments/
+data/
+dataset_cache*
+runs/
+ParlAI/
+__pycache__
+.env/
+runs/
+.DS_Store
+gpt_personachat_cache_v2/
+*dataset_cache*
+cache/
+cache.tar.gz_GPT2Tokenizer
+cache.tar.gz_GPT2Tokenizer_GPT2Tokenizer
