@@ -14,7 +14,7 @@ import pickle
 import os
 from pprint import pprint
 from tqdm import tqdm
-from collections import OrderedDict
+import numpy as np
 
 with open("data/persona_history.json") as fp:
     history_json = json.load(fp)
@@ -92,14 +92,12 @@ model = model_class.from_pretrained(args.model_checkpoint)
 model.to(args.device)
 add_special_tokens_(model, tokenizer)
 
-
-device = torch.device("cuda")
 mrpc_tokenizer = AutoTokenizer.from_pretrained("bert-base-cased-finetuned-mrpc")
 mrpc_model = AutoModelForSequenceClassification.from_pretrained("bert-base-cased-finetuned-mrpc")
 
 cola_tokenizer = AutoTokenizer.from_pretrained("textattack/roberta-base-CoLA")
 cola_model = AutoModelForSequenceClassification.from_pretrained("textattack/roberta-base-CoLA")
-# model.to(device)
+
 
 # Get Dataset, Persoan, History
 dataset = get_dataset(tokenizer, args.dataset_path, args.dataset_cache)
@@ -124,8 +122,8 @@ utterances = [ dialog["utterances"] for dataset in dataset.values() for dialog i
 shuffle_idx = random.choice(range(len(personalities)))
 personality = personalities[shuffle_idx]
 utterance = utterances[shuffle_idx]
-gold_history = decode(history[shuffle_idx])
-# gold_history = [tokenizer.decode(line) for line in gold_history]
+gold_history = history[shuffle_idx]
+gold_history = [tokenizer.decode(line) for line in gold_history]
 
 
 personality_decoded = decode(personality)
@@ -135,80 +133,79 @@ print(f"PERSONA:{personality_decoded}")
 chatbot = ChatBot(args, tokenizer, model)
 
 
-MRPC = AFL(mrpc_model, mrpc_tokenizer, "MRPC", device)
-CoLA = AFL(cola_model, cola_tokenizer, "CoLA", device)
+MRPC = AFL(mrpc_model, mrpc_tokenizer, "MRPC")
+CoLA = AFL(cola_model, cola_tokenizer, "CoLA")
 # Redundancy = AFL(mrpc_model, mrpc_tokenizer, "Redundancy")
 
 
+
+# def
 
 def shuffle_inputs(personalities: list, utterances: list, history: list):
     shuffle_idx = random.choice(range(len(personalities)))
     personality = personalities[shuffle_idx]
     utterance = utterances[shuffle_idx]
-    gold_history = decode(history[shuffle_idx])
+    gold_history = history[shuffle_idx]
+    gold_history = [tokenizer.decode(line) for line in gold_history]
+
     return personality, utterance, gold_history
 
+def pseudo_code(personalities, utterances, history):
+    PERSONA_FLAG = False
+    personality, utterance, gold_history = shuffle_inputs(personalities, utterances, history)
+    history = edict({"chatbot": [], "human": []})
+    turn = 0
+    turning_point = random.randint(2, len(utterance)-1) # turn of inputting negative sample
 
-while True:
-    raw_text = input(">>> ")
-    sentence = raw_text.strip()
+    while True:
+        sentence = "".join(decode(utterance[turn]['history'][-1]))
+        next_answer = utterance[turn+1]['history'][-1]
+        candidates = utterance[turn+1]['candidates']
 
-    gold_answer = utterance[AFL.count+1]['history']
-    candidates = utterance[AFL.count+1]['candidates']
-    pprint({"GOLD_ANSWER": decode(gold_answer), "CANDIDATES": decode(candidates)})
-    # predict next sentence
-    result_conv = chatbot.return_message(sentence, personality)
+        # pprint({"GOLD_ANSWER": decode(next_answer), "CANDIDATES": decode(candidates)})
+        # predict next sentence
+        result_conv = chatbot.return_message(sentence, personality)
 
-    history.human.append(sentence)
-    history.chatbot.append(result_conv)
+        history.human.append(sentence)
+        history.chatbot.append(result_conv)
 
-    result_mrpc = MRPC.return_prediction(history, gold_history)
-    result_cola = CoLA.return_prediction(history, gold_history)
+        result_mrpc = MRPC.return_prediction(history, gold_history)
+        result_cola = CoLA.return_prediction(history, gold_history)
+        turn += 1
 
-    result_spell = grammer.correct(sentence)
+        if turn >= turning_point:
+            # set negative sample
+            candidate = random.choice(candidates)
+            while candidate == next_answer:
+                candidate = random.shuffle(candidates)
 
+            sentence = "".join(decode(candidate)) # false sentence
+            result_conv = chatbot.return_message(sentence, personality)
+            history.human.append(sentence)
+            history.chatbot.append(result_conv)
+            result_mrpc = MRPC.return_prediction(history, gold_history)
+            result_cola = CoLA.return_prediction(history, gold_history)
 
-    # When you got response from chatbot >> turn +1
+            # if threshold:
+            #     PERSONA_FLAG = True
 
-
-    results = {
-        "response": result_conv,
-        "similarity": result_mrpc,
-        "correct": result_cola,
-        "persona": personality_decoded,
-        "history" : [tokenizer.decode(line) for line in chatbot.history],
-        "count": AFL.count,
-        "spell": result_spell if result_spell.lower() != sentence else ["nothing to change!"],
-        "isChanged": AFL.changed_flag,
-    }
-
-    AFL.count += 1
-    # AFL.changed_flag = False
-
-    # if AFL.count >= 4:  ## 나중에 5턴
-    #     CoLA_avg = CoLA.average()
-    #     MRPC_avg = MRPC.average()
-
-    #     if CoLA_avg > 70 and MRPC_avg > 65 and AFL.changed_flag == False:
-    #         shuffle_idx = random.choice(range(len(personalities)))
-    #         personality = personalities[shuffle_idx]
-    #         history_original = history[shuffle_idx]
-    #         history_original = [tokenizer.decode(line) for line in history_original]
-    #         chatbot.personality = personality
-    #         chatbot.hisory = []
-
-    #         AFL.count = 0
-
-
-    #     chatbot.history = []
+            return result_mrpc, result_cola
 
 
 
 
+if __name__ == '__main__':
+    sim = []
+    cor = []
 
-    # pprint(results)  # 받아온 데이터를 다시 전송
-    print(json.dumps(results, indent=4))
+    for _ in tqdm(range(100)):
+        similarity, correctness = pseudo_code(personalities, utterances, history)
+        sim.append(similarity)
+        cor.append(correctness)
 
+    sim = np.array(sim)
+    cor = np.array(cor)
+    print("SIMLIARTY: ", np.mean(sim), "CORRECTNESS: ", np.mean(cor))
 
-
-
+    with open('mrpc_cola_result.json') as fp:
+        json.dump({"SIMLIARTY": sim, "CORRECTNESS": cor}, indent=4)

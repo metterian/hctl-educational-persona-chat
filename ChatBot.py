@@ -1,14 +1,12 @@
-##여긴 챗봇 클래스
 import logging
 import random
 from argparse import ArgumentParser
 from itertools import chain
 from pprint import pformat
 import warnings
-#######
 import torch
 import torch.nn.functional as F
-import easydict
+
 
 from transformers import OpenAIGPTLMHeadModel, OpenAIGPTTokenizer, GPT2LMHeadModel, GPT2Tokenizer
 from train import SPECIAL_TOKENS, build_input_from_segments, add_special_tokens_
@@ -16,24 +14,18 @@ from utils import get_dataset, download_pretrained_model
 from time import sleep
 import time
 import random
+
+
 class ChatBot:
-    def __init__(self,args,tokenizer,model,personality, original_history):
-        self.args= args
-        self.tokenizer=tokenizer
+    def __init__(self, args, tokenizer, model):
+        self.args = args
+        self.tokenizer =tokenizer
         self.model = model
-        self.personality = personality
-        self.original_history = original_history
         self.history = []
 
-    def return_message(self,sample_json):
-        sentence=sample_json
-        # while True:
-        raw_text = sample_json
-        while not raw_text:
-            print('Prompt should not be empty!')
-            raw_text = sentence
-
-        self.history.append(self.tokenizer.encode(raw_text))
+    def return_message(self, sentence : str, personality: list) -> str:
+        self.personality = personality
+        self.history.append(self.tokenizer.encode(sentence))
         with torch.no_grad():
             out_ids = sample_sequence(self.personality, self.history, self.tokenizer, self.model, self.args)
             self.history.append(out_ids)
