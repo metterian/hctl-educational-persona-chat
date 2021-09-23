@@ -93,14 +93,6 @@ model.to(args.device)
 add_special_tokens_(model, tokenizer)
 
 
-device = torch.device("cuda")
-mrpc_tokenizer = AutoTokenizer.from_pretrained("bert-base-cased-finetuned-mrpc")
-mrpc_model = AutoModelForSequenceClassification.from_pretrained("bert-base-cased-finetuned-mrpc")
-
-cola_tokenizer = AutoTokenizer.from_pretrained("textattack/roberta-base-CoLA")
-cola_model = AutoModelForSequenceClassification.from_pretrained("textattack/roberta-base-CoLA")
-# model.to(device)
-
 # Get Dataset, Persoan, History
 dataset = get_dataset(tokenizer, args.dataset_path, args.dataset_cache)
 
@@ -135,8 +127,8 @@ print(f"PERSONA:{personality_decoded}")
 chatbot = ChatBot(args, tokenizer, model)
 
 
-MRPC = AFL(mrpc_model, mrpc_tokenizer, "MRPC", device)
-CoLA = AFL(cola_model, cola_tokenizer, "CoLA", device)
+MRPC = AFL(model_name = "bert-base-cased-finetuned-mrpc", task = "MRPC")
+CoLA = AFL(model_name = "textattack/roberta-base-CoLA", task = "CoLA")
 # Redundancy = AFL(mrpc_model, mrpc_tokenizer, "Redundancy")
 
 
@@ -145,17 +137,23 @@ def shuffle_inputs(personalities: list, utterances: list, history: list):
     shuffle_idx = random.choice(range(len(personalities)))
     personality = personalities[shuffle_idx]
     utterance = utterances[shuffle_idx]
-    gold_history = decode(history[shuffle_idx])
+    gold_history = history[shuffle_idx]
+    gold_history = [tokenizer.decode(line) for line in gold_history]
+
     return personality, utterance, gold_history
 
+
+
+
+turn_flag = False
+turn = 0
+threshold_sim = 25
+threshold_cor = 75
 
 while True:
     raw_text = input(">>> ")
     sentence = raw_text.strip()
 
-    gold_answer = utterance[AFL.count+1]['history']
-    candidates = utterance[AFL.count+1]['candidates']
-    pprint({"GOLD_ANSWER": decode(gold_answer), "CANDIDATES": decode(candidates)})
     # predict next sentence
     result_conv = chatbot.return_message(sentence, personality)
 
@@ -177,13 +175,19 @@ while True:
         "correct": result_cola,
         "persona": personality_decoded,
         "history" : [tokenizer.decode(line) for line in chatbot.history],
-        "count": AFL.count,
+        "count": turn,
         "spell": result_spell if result_spell.lower() != sentence else ["nothing to change!"],
         "isChanged": AFL.changed_flag,
     }
 
-    AFL.count += 1
-    # AFL.changed_flag = False
+    turn += 1
+
+    if turn >= 2:
+        if result_mrpc < threshold_sim or result_cola < threshold_cor:
+            personality, utterance, gold_history = shuffle_inputs(personalities, utterances, history)
+            chatbot.history = []
+            turn = 0
+
 
     # if AFL.count >= 4:  ## 나중에 5턴
     #     CoLA_avg = CoLA.average()

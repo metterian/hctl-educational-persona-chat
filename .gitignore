@@ -13,3 +13,5 @@ gpt_personachat_cache_v2/
 cache/
 cache.tar.gz_GPT2Tokenizer
 cache.tar.gz_GPT2Tokenizer_GPT2Tokenizer
+afl_metrics_candidate/
+afl_metrics_cola/

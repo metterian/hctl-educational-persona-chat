@@ -3,7 +3,6 @@ import json
 from numba import jit
 from easydict import EasyDict as edict
 from tqdm import tqdm
-# %%
 with open('data/personachat_self_original.json', encoding='utf-8-sig') as fp:
     input_json = json.load(fp)
 train = input_json['train']

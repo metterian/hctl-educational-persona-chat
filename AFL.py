@@ -4,20 +4,24 @@ import random
 import requests
 import json
 from easydict import EasyDict as edict
+import torch
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 
 class AFL:
     count = 0
     changed_flag=False
 
-    def __init__(self, model, tokenizer, task, device):
-        self.model = model
-        self.tokenizer = tokenizer
+    def __init__(self, model_name, task):
         self.score = []
         self.task = task
         self.answer = []
         self.changed_flag = False
-        self.device = device
+        self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModelForSequenceClassification.from_pretrained(model_name)
+        self.model.to(self.device)
+
 
     def return_prediction(self, history: list, history_sentences: list) -> dict:
         if self.task == "MRPC":
@@ -59,8 +63,9 @@ class AFL:
 
         elif self.task == "CoLA":
             sentence = history.human[-1]
+            sentence = history
             classes = ["wrong", "correct"]
-            paraphrase = self.tokenizer(sentence, return_tensors="pt")
+            paraphrase = self.tokenizer(sentence, return_tensors="pt").to(self.device)
             paraphrase_classification_logits = self.model(**paraphrase)[0]
             paraphrase_results = torch.softmax(paraphrase_classification_logits, dim=1).tolist()[0]
             self.score.append(float(paraphrase_results[1] * 100))
