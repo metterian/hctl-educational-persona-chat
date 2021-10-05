@@ -1,11 +1,10 @@
 import os
 import random
 import pickle
-from argparse import ArgumentParser
 import torch
 import torch.nn.functional as F
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
-
+from typing import List
 from config import args
 from interact import top_filtering, sample_sequence
 from train import add_special_tokens_
@@ -29,10 +28,13 @@ class Chatbot:
 
     def __init__(self) -> None:
         '''Initialize tokenizer, model and datasets'''
-
-        tokenizer_class, model_class = GPT2Tokenizer, GPT2LMHeadModel
+        if args.seed != 0:
+            random.seed(args.seed)
+            torch.random.manual_seed(args.seed)
+            torch.cuda.manual_seed(args.seed)
 
         # laod tokenizer and model
+        tokenizer_class, model_class = GPT2Tokenizer, GPT2LMHeadModel
         self.tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
         self.model = model_class.from_pretrained(args.model_checkpoint)
         self.model.to(args.device)
@@ -84,11 +86,11 @@ class Chatbot:
 
         return personality, utterance, gold_history
 
-    def decode(self, tokens) -> list:
+    def decode(self, tokens) -> List[str]:
         'Decode the utterance by tokenizer'
         return [self.tokenizer.decode(token) for token in tokens]
 
-    def get_personality(self):
+    def get_personality(self) -> List[str]:
         '''Return current personality'''
         personality_decoded = self.decode(self.personality)
         print(f"PERSONA:{personality_decoded}")
