@@ -1,5 +1,6 @@
-from AFL import AFL
-from ChatBot import ChatBot
+from models.AFL import *
+from models.chatbot import Chatbot
+
 import grammer
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
@@ -18,18 +19,6 @@ from collections import OrderedDict, namedtuple
 
 with open("data/persona_history.json") as fp:
     history_json = json.load(fp)
-
-# pickle load
-def pickle_load(path: str):
-    with open(path, "rb") as f:
-        data = pickle.load(f)
-    return data
-
-
-def pickle_save(path: str, data) -> None:
-    with open(path, "wb") as f:
-        pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
-
 
 
 mrpc_models = [
@@ -78,11 +67,8 @@ if args.seed != 0:
 
 
 
-personality_decoded = decode(personality)
-print(f"PERSONA:{personality_decoded}")
 
-
-chatbot = ChatBot(args, tokenizer, model)
+chatbot = ChatBot(args)
 
 
 MRPC = AFL(model_name = "bert-base-cased-finetuned-mrpc", task = "MRPC")

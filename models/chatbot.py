@@ -23,7 +23,7 @@ def pickle_save(path: str, data) -> None:
         pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
 
-class ChatBot:
+class Chatbot:
     '''Conversation Agent model based on Hugging face, using GPT-2'''
     def __init__(self, args) -> None:
         '''Initialize tokenizer, model and datasets'''
@@ -81,7 +81,6 @@ class ChatBot:
         gold_history = [self.tokenizer.decode(line) for line in gold_history]
 
         return personality, utterance, gold_history
-
 
     def decode(self, tokens) -> list:
         'Decode the utterance by tokenizer'
