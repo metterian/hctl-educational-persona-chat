@@ -17,6 +17,6 @@ args = edict(
         "no_sample": True,
         "max_length": 20,
         "min_length": 1,
-        "seed": 0,
+        "seed": 42,
     }
 )

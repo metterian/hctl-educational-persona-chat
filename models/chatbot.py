@@ -6,6 +6,7 @@ import torch
 import torch.nn.functional as F
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
+from config import args
 from interact import top_filtering, sample_sequence
 from train import add_special_tokens_
 from utils import get_dataset
@@ -25,9 +26,10 @@ def pickle_save(path: str, data) -> None:
 
 class Chatbot:
     '''Conversation Agent model based on Hugging face, using GPT-2'''
-    def __init__(self, args) -> None:
+
+    def __init__(self) -> None:
         '''Initialize tokenizer, model and datasets'''
-        self.args = args
+
         tokenizer_class, model_class = GPT2Tokenizer, GPT2LMHeadModel
 
         # laod tokenizer and model
@@ -44,27 +46,27 @@ class Chatbot:
         self.personality = personality
         self.history.append(self.tokenizer.encode(sentence))
         with torch.no_grad():
-            out_ids = sample_sequence(self.personality, self.history, self.tokenizer, self.model, self.args)
+            out_ids = sample_sequence(self.personality, self.history, self.tokenizer, self.model, args)
             self.history.append(out_ids)
-            self.history = self.history[-(2*self.args.max_history+1):]
+            self.history = self.history[-(2*args.max_history+1):]
             out_text = self.tokenizer.decode(out_ids, skip_special_tokens=True)
         return out_text
 
 
     def laod_dataset(self) -> None:
         '''Load Persona, History dataset as caches or json files'''
-        dataset = get_dataset(self.tokenizer, self.args.dataset_path, self.args.dataset_cache)
+        dataset = get_dataset(self.tokenizer, args.dataset_path, args.dataset_cache)
 
         # load persona cache
-        if self.args.persona_cache and os.path.isfile(self.args.persona_cache):
-            personalities = pickle_load(self.args.persona_cache)
+        if args.persona_cache and os.path.isfile(args.persona_cache):
+            personalities = pickle_load(args.persona_cache)
         else:
             personalities = [dialog["personality"] for dataset in dataset.values() for dialog in dataset]
             pickle_save(path="./cache/persona_cache", data=personalities)
 
         # load history cache
-        if self.args.history_cache and os.path.isfile(self.args.history_cache):
-            history = pickle_load(self.args.history_cache)
+        if args.history_cache and os.path.isfile(args.history_cache):
+            history = pickle_load(args.history_cache)
         else:
             history = [ dialog["utterances"][-1]["history"] for dataset in dataset.values() for dialog in dataset ]
             pickle_save(path="./cache/history_cache", data=history)
