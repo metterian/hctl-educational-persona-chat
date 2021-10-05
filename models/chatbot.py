@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 from typing import List
-from config import args
+from models.config import args
 from interact import top_filtering, sample_sequence
 from train import add_special_tokens_
 from utils import get_dataset
