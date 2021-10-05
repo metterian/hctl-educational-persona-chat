@@ -1,15 +1,13 @@
 from models.AFL import *
 from models.chatbot import Chatbot
+from models.config import args
+from models import grammer
+
 
 import grammer
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-from easydict import EasyDict as edict
 import random
 import torch
-from transformers import GPT2LMHeadModel,GPT2Tokenizer
-from train import add_special_tokens_
-from utils import PERSONACHAT_URL, get_dataset, download_pretrained_model
 import json
 import pickle
 import os
@@ -37,25 +35,6 @@ cola_models = [
     # "textattack/albert-base-v2-CoLA"
 ]
 
-args = edict(
-    {
-        "model": "gpt2",
-        "dataset_path": "./data/personachat_self_original.json",
-        "dataset_cache": "./cache.tar.gz_GPT2Tokenizer",
-        "persona_cache": "cache/persona_cache",
-        "history_cache": "cache/history_cache",
-        "model_checkpoint": "./runs/train_6cans3",
-        "temperature": 1.9,
-        "top_k": 180,
-        "top_p": 0.1,
-        "max_history": 2,
-        "device": "cuda" if torch.cuda.is_available() else "cpu",
-        "no_sample": True,
-        "max_length": 20,
-        "min_length": 1,
-        "seed": 0,
-    }
-)
 
 
 
@@ -68,7 +47,7 @@ if args.seed != 0:
 
 
 
-chatbot = ChatBot(args)
+chatbot = Chatbot(args)
 
 
 MRPC = AFL(model_name = "bert-base-cased-finetuned-mrpc", task = "MRPC")
