@@ -76,12 +76,6 @@ if args.seed != 0:
     torch.cuda.manual_seed(args.seed)
 
 
-# Select the shuffled persona and history
-shuffle_idx = random.choice(range(len(personalities)))
-personality = personalities[shuffle_idx]
-utterance = utterances[shuffle_idx]
-gold_history = decode(history[shuffle_idx])
-# gold_history = [tokenizer.decode(line) for line in gold_history]
 
 
 personality_decoded = decode(personality)

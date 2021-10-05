@@ -50,10 +50,6 @@ class ChatBot:
             out_text = self.tokenizer.decode(out_ids, skip_special_tokens=True)
         return out_text
 
-    def decode(self, tokens) -> list:
-        'Decode the utterance by tokenizer'
-        return [self.tokenizer.decode(token) for token in tokens]
-
 
     def laod_dataset(self) -> None:
         '''Load Persona, History dataset as caches or json files'''
@@ -76,7 +72,6 @@ class ChatBot:
         self.utterances = [ dialog["utterances"] for dataset in dataset.values() for dialog in dataset ]
 
 
-
     def shuffle_inputs(self, personalities: list, utterances: list, history: list) -> list:
         '''Shuffle the inputs which are persona, utterance and history by the persona index'''
         shuffle_idx = random.choice(range(len(personalities)))
@@ -86,3 +81,14 @@ class ChatBot:
         gold_history = [self.tokenizer.decode(line) for line in gold_history]
 
         return personality, utterance, gold_history
+
+
+    def decode(self, tokens) -> list:
+        'Decode the utterance by tokenizer'
+        return [self.tokenizer.decode(token) for token in tokens]
+
+    def get_personality(self):
+        '''Return current personality'''
+        personality_decoded = self.decode(self.personality)
+        print(f"PERSONA:{personality_decoded}")
+        return personality_decoded
