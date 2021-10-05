@@ -1,12 +1,26 @@
-from typing import List
+import os
+import random
+import pickle
 from argparse import ArgumentParser
-from itertools import chain
 import torch
 import torch.nn.functional as F
-from interact import top_filtering, sample_sequence
-import random
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+from interact import top_filtering, sample_sequence
 from train import SPECIAL_TOKENS, build_input_from_segments, add_special_tokens_
+from utils import get_dataset
+
+
+# pickle load
+def pickle_load(path: str):
+    with open(path, "rb") as f:
+        data = pickle.load(f)
+    return data
+
+
+def pickle_save(path: str, data) -> None:
+    with open(path, "wb") as f:
+        pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
 
 class ChatBot:
@@ -39,6 +53,29 @@ class ChatBot:
     def decode(self, tokens) -> list:
         'Decode the utterance by tokenizer'
         return [self.tokenizer.decode(token) for token in tokens]
+
+
+    def laod_dataset(self) -> None:
+        '''Load Persona, History dataset as caches or json files'''
+        dataset = get_dataset(self.tokenizer, self.args.dataset_path, self.args.dataset_cache)
+
+        # load persona cache
+        if self.args.persona_cache and os.path.isfile(self.args.persona_cache):
+            personalities = pickle_load(self.args.persona_cache)
+        else:
+            personalities = [dialog["personality"] for dataset in dataset.values() for dialog in dataset]
+            pickle_save(path="./cache/persona_cache", data=personalities)
+
+        # load history cache
+        if self.args.history_cache and os.path.isfile(self.args.history_cache):
+            history = pickle_load(self.args.history_cache)
+        else:
+            history = [ dialog["utterances"][-1]["history"] for dataset in dataset.values() for dialog in dataset ]
+            pickle_save(path="./cache/history_cache", data=history)
+
+        self.utterances = [ dialog["utterances"] for dataset in dataset.values() for dialog in dataset ]
+
+
 
     def shuffle_inputs(self, personalities: list, utterances: list, history: list) -> list:
         '''Shuffle the inputs which are persona, utterance and history by the persona index'''

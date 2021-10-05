@@ -76,25 +76,6 @@ if args.seed != 0:
     torch.cuda.manual_seed(args.seed)
 
 
-# Get Dataset, Persoan, History
-dataset = get_dataset(tokenizer, args.dataset_path, args.dataset_cache)
-
-if args.persona_cache and os.path.isfile(args.persona_cache):
-    personalities = pickle_load(args.persona_cache)
-else:
-    personalities = [dialog["personality"] for dataset in dataset.values() for dialog in dataset]
-    pickle_save(path="./cache/persona_cache", data=personalities)
-
-
-if args.history_cache and os.path.isfile(args.history_cache):
-    history = pickle_load(args.history_cache)
-else:
-    history = [ dialog["utterances"][-1]["history"] for dataset in dataset.values() for dialog in dataset ]
-    pickle_save(path="./cache/history_cache", data=history)
-
-utterances = [ dialog["utterances"] for dataset in dataset.values() for dialog in dataset ]
-
-
 # Select the shuffled persona and history
 shuffle_idx = random.choice(range(len(personalities)))
 personality = personalities[shuffle_idx]

@@ -43,11 +43,6 @@ def translate(kor_text: str, wait : bool = False) -> dict:
 
 translator = googletrans.Translator()
 
-tqdm.pandas()
-# %%
-# %%
-trans['situation'] = trans['상황'].apply(lambda x: translator.translate(x).text )
-
 # %%
 from collections import OrderedDict
 
@@ -62,15 +57,15 @@ for situation in tqdm(trans['상황'].unique()):
     time.sleep(0.5)
 
 # %%
-import os
-from google.cloud import translate_v2 as translate
-import json
+# import os
+# from google.cloud import translate_v2 as translate
+# import json
 
-client = translate.Client()
-result = client.translate('안녕하세요', target_language='en')
+# client = translate.Client()
+# result = client.translate('안녕하세요', target_language='en')
 
-secret_path = "/root/client_secret.json"
+# secret_path = "/root/client_secret.json"
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = secret_path
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = secret_path
 # %%
 # %%
