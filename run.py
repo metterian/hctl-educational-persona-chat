@@ -50,8 +50,6 @@ cola_models = [
     # "textattack/albert-base-v2-CoLA"
 ]
 
-
-
 args = edict(
     {
         "model": "gpt2",
@@ -73,24 +71,11 @@ args = edict(
 )
 
 
-if args.model_checkpoint == "":
-    if args.model == "gpt2":
-        raise ValueError("Interacting with GPT2 requires passing a finetuned model_checkpoint")
-    else:
-        args.model_checkpoint = download_pretrained_model()
-
 
 if args.seed != 0:
     random.seed(args.seed)
     torch.random.manual_seed(args.seed)
     torch.cuda.manual_seed(args.seed)
-
-# Get pretrained model and tokenizer
-tokenizer_class, model_class = GPT2Tokenizer, GPT2LMHeadModel
-tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
-model = model_class.from_pretrained(args.model_checkpoint)
-model.to(args.device)
-add_special_tokens_(model, tokenizer)
 
 
 # Get Dataset, Persoan, History
@@ -155,7 +140,7 @@ while True:
     sentence = raw_text.strip()
 
     # predict next sentence
-    result_conv = chatbot.return_message(sentence, personality)
+    result_conv = chatbot.message(sentence, personality)
 
     history.human.append(sentence)
     history.chatbot.append(result_conv)

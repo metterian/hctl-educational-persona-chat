@@ -23,9 +23,11 @@ class ChatBot:
         self.model.to(args.device)
         add_special_tokens_(self.model, self.tokenizer)
 
+        # set history as empty list for recording the conversation
         self.history = []
 
-    def return_message(self, sentence : str, personality: list) -> str:
+    def message(self, sentence : str, personality: list) -> str:
+        '''Receive user input with Persona and send the next utterance.'''
         self.personality = personality
         self.history.append(self.tokenizer.encode(sentence))
         with torch.no_grad():
