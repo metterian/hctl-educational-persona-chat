@@ -1,10 +1,9 @@
 from models.AFL import *
 from models.chatbot import Chatbot
 from models.config import args
-from models import grammer
+from models import grammar
 
 
-import grammer
 import torch
 import random
 import torch
