@@ -1,8 +1,6 @@
-import logging
-import random
+from typing import List
 from argparse import ArgumentParser
 from itertools import chain
-from pprint import pformat
 import warnings
 import torch
 import torch.nn.functional as F
@@ -10,10 +8,6 @@ import torch.nn.functional as F
 
 from transformers import OpenAIGPTLMHeadModel, OpenAIGPTTokenizer, GPT2LMHeadModel, GPT2Tokenizer
 from train import SPECIAL_TOKENS, build_input_from_segments, add_special_tokens_
-from utils import get_dataset, download_pretrained_model
-from time import sleep
-import time
-import random
 
 
 class ChatBot:

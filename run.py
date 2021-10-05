@@ -14,7 +14,7 @@ import pickle
 import os
 from pprint import pprint
 from tqdm import tqdm
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 
 with open("data/persona_history.json") as fp:
     history_json = json.load(fp)
