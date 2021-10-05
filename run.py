@@ -30,8 +30,6 @@ def pickle_save(path: str, data) -> None:
     with open(path, "wb") as f:
         pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
-def decode(tokens):
-    return [tokenizer.decode(token) for token in tokens]
 
 
 mrpc_models = [
@@ -117,15 +115,6 @@ CoLA = AFL(model_name = "textattack/roberta-base-CoLA", task = "CoLA")
 # Redundancy = AFL(mrpc_model, mrpc_tokenizer, "Redundancy")
 
 
-
-def shuffle_inputs(personalities: list, utterances: list, history: list):
-    shuffle_idx = random.choice(range(len(personalities)))
-    personality = personalities[shuffle_idx]
-    utterance = utterances[shuffle_idx]
-    gold_history = history[shuffle_idx]
-    gold_history = [tokenizer.decode(line) for line in gold_history]
-
-    return personality, utterance, gold_history
 
 
 
