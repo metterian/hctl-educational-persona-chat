@@ -127,7 +127,7 @@ class ContextSimilarity(ContextDector):
         super().__init__(model_name)
 
     def predict(self, history: list, history_sentences: list):
-        sentence = history.human[-1] # recent human input
+        sentence = history[-1] # recent human input
         scores = []
 
         for history_sentence in history_sentences:
@@ -149,8 +149,7 @@ class LinguisticAcceptability(ContextDector):
         super().__init__(model_name)
 
     def predict(self, history):
-        sentence = history.human[-1]
-        sentence = history
+        sentence = history[-1]
         classes = ["wrong", "correct"]
         paraphrase = self.tokenizer(sentence, return_tensors="pt").to(self.device)
         paraphrase_classification_logits = self.model(**paraphrase)[0]

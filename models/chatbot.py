@@ -7,7 +7,7 @@ import torch
 import torch.nn.functional as F
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 from models.config import args
-from interact import top_filtering, sample_sequence
+from interact import sample_sequence
 from train import add_special_tokens_
 from utils import get_dataset
 
@@ -47,17 +47,17 @@ def laod_dataset(args, tokenizer) -> None:
     return personalities, utterances, history
 
 
-def shuffle_inputs(personalities, utterances) -> None:
+def shuffle_inputs(personalities, utterances, gold_history) -> None:
     '''Shuffle the inputs which are persona, utterance and history by the persona index'''
     shuffle_idx = random.choice(range(len(personalities)))
     personality = personalities[shuffle_idx]
     utterance = utterances[shuffle_idx]
-    return personality, utterance
+    gold_history = gold_history[shuffle_idx]
+    return personality, utterance, gold_history
 
 
 class Chatbot:
     '''Conversation Agent model based on Hugging face, using GPT-2'''
-
     def __init__(self) -> None:
         '''Initialize tokenizer, model and datasets'''
         if args.seed != 0:
@@ -73,12 +73,11 @@ class Chatbot:
         add_special_tokens_(self.model, self.tokenizer)
 
         # load dataset
-        dataset = get_dataset(self.tokenizer, args.dataset_path, args.dataset_cache)
-        personalities, utterances, gold_history = laod_dataset(args, self.tokenizer)
-        self.personalities, self.utterances = personalities, utterances
+        personalities, utterances, gold_histories = laod_dataset(args, self.tokenizer)
+        self.personalities, self.utterances, self.gold_histories = personalities, utterances, gold_histories
 
         # set personality as shuffing
-        self.personality, self.utterance = shuffle_inputs(self.personalities, self.utterances)
+        self.personality, self.utterance, self.gold_history = shuffle_inputs(self.personalities, self.utterances, self.gold_histories)
 
         # set history as empty list for recording the conversation
         self.history = []
@@ -94,6 +93,8 @@ class Chatbot:
             out_text = self.tokenizer.decode(out_ids, skip_special_tokens=True)
         return out_text
 
+    def shuffle(self):
+        self.personality, self.utterance, self.gold_history = shuffle_inputs(self.personalities, self.utterances, self.gold_histories)
 
     def decode(self, tokens: List[List[str]]) -> List[str]:
         'Decode the double list by tokenizer'
@@ -106,7 +107,7 @@ class Chatbot:
         return personality_decoded
 
     def get_history(self) -> List[str]:
-        return self.decode(self.history)
+        return self.history_decoded
 
     def get_human_history(self) -> List[str]:
         '''Return divide history and get human dialogue'''
@@ -116,9 +117,11 @@ class Chatbot:
     def get_chatbot_history(self) -> List[str]:
         '''Return divide history and get chatbot dialogue'''
         history = self.decode(self.history)
+        self.chatbot_history = history
         return history[1::2]
 
-
+    def get_gold_history(self) -> List[List[str]]:
+        return self.decode(self.gold_history)
 
     def clear_history(self) -> None:
         '''Clear the history'''

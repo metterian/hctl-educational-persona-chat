@@ -10,7 +10,6 @@ import json
 import os
 from pprint import pprint
 from tqdm import tqdm
-from collections import OrderedDict, namedtuple
 
 
 chatbot = Chatbot()
@@ -26,13 +25,20 @@ threshold_sim = 25
 threshold_cor = 75
 
 
-def divide_dialogue(history):
-    human = history[::2]
-    chatbot = history[1::2]
-    return human, chatbot
+class History:
+    def __init__(self, model) -> None:
+        self.model = model
+        self.human = self.model.get_human_history()
+        self.chatbot = self.model.get_chatbot_history()
 
+    def __repr__(self) -> str:
+        return f'Human: {self.human} \nChatbot: {self.chatbot}'
 
+    def clear(self):
+        self.model.clear_history()
+        self.human = []
 
+isChanged = False
 while True:
     raw_text = input(">>> ")
     sentence = raw_text.strip()
@@ -40,35 +46,31 @@ while True:
     # predict next sentence
     message = chatbot.send_message(sentence)
 
-
-    result_mrpc = MRPC.return_prediction(conv_history, gold_history)
-    result_cola = CoLA.return_prediction(conv_history, gold_history)
+    similarity = MRPC.predict(chatbot.get_human_history(), chatbot.get_gold_history())
+    acceptability = CoLA.predict(chatbot.get_human_history())
 
     result_spell = grammar.correct(sentence)
 
-
     # When you got response from chatbot >> turn +1
-
-
-    results = {
-        "response": message,
-        "similarity": result_mrpc,
-        "correct": result_cola,
-        "persona": personality_decoded,
-        "history" : [tokenizer.decode(line) for line in chatbot.history],
-        "count": turn,
-        "spell": result_spell if result_spell.lower() != sentence else ["nothing to change!"],
-        "isChanged": AFL.changed_flag,
-    }
-
     turn += 1
 
     if turn >= 2:
-        if result_mrpc < threshold_sim or result_cola < threshold_cor:
-            personality, utterance, gold_history = shuffle_inputs(personalities, utterances, history)
-            chatbot.history = []
+        if similarity < threshold_sim or acceptability < threshold_cor:
+            chatbot.shuffle()
+            chatbot.clear_history()
+            isChanged = True
             turn = 0
 
+    results = {
+        "response": message,
+        "similarity": similarity,
+        "correct": acceptability,
+        "persona": chatbot.get_personality(),
+        # "history" : [tokenizer.decode(line) for line in chatbot.history],
+        "count": turn,
+        "spell": result_spell if result_spell.lower() != sentence else ["nothing to change!"],
+        "persona_changed" : isChanged
+    }
 
     # if AFL.count >= 4:  ## 나중에 5턴
     #     CoLA_avg = CoLA.average()
@@ -86,9 +88,6 @@ while True:
 
 
     #     chatbot.history = []
-
-
-
 
 
     # pprint(results)  # 받아온 데이터를 다시 전송
