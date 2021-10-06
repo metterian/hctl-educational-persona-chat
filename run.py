@@ -1,56 +1,21 @@
-from models.AFL import *
+from models.context_detector import ContextSimilarity, LinguisticAcceptability
 from models.chatbot import Chatbot
 from models.config import args
 from models import grammar
 
-
-import torch
-import random
+from typing import List
+from dataclasses import dataclass, field
 import torch
 import json
-import pickle
 import os
 from pprint import pprint
 from tqdm import tqdm
 from collections import OrderedDict, namedtuple
 
 
-mrpc_models = [
-    "bert-base-cased-finetuned-mrpc",
-    "textattack/roberta-base-MRPC",
-    "textattack/facebook-bart-large-MRPC",
-    "textattack/xlnet-base-cased-MRPC"
-    # "textattack/albert-base-v2-MRPC",
-]
-
-cola_models = [
-    "textattack/facebook-bart-large-CoLA",
-    "textattack/distilbert-base-uncased-CoLA",
-    "textattack/bert-base-uncased-CoLA",
-    "textattack/roberta-base-CoLA",
-    # "textattack/albert-base-v2-CoLA"
-]
-
-
-
-
-if args.seed != 0:
-    random.seed(args.seed)
-    torch.random.manual_seed(args.seed)
-    torch.cuda.manual_seed(args.seed)
-
-
-
-
-
-chatbot = Chatbot(args)
-
-
-MRPC = AFL(model_name = "bert-base-cased-finetuned-mrpc", task = "MRPC")
-CoLA = AFL(model_name = "textattack/roberta-base-CoLA", task = "CoLA")
-# Redundancy = AFL(mrpc_model, mrpc_tokenizer, "Redundancy")
-
-
+chatbot = Chatbot()
+MRPC = ContextSimilarity()
+CoLA = LinguisticAcceptability()
 
 
 
@@ -60,27 +25,33 @@ turn = 0
 threshold_sim = 25
 threshold_cor = 75
 
+
+def divide_dialogue(history):
+    human = history[::2]
+    chatbot = history[1::2]
+    return human, chatbot
+
+
+
 while True:
     raw_text = input(">>> ")
     sentence = raw_text.strip()
 
     # predict next sentence
-    result_conv = chatbot.message(sentence, personality)
+    message = chatbot.send_message(sentence)
 
-    history.human.append(sentence)
-    history.chatbot.append(result_conv)
 
-    result_mrpc = MRPC.return_prediction(history, gold_history)
-    result_cola = CoLA.return_prediction(history, gold_history)
+    result_mrpc = MRPC.return_prediction(conv_history, gold_history)
+    result_cola = CoLA.return_prediction(conv_history, gold_history)
 
-    result_spell = grammer.correct(sentence)
+    result_spell = grammar.correct(sentence)
 
 
     # When you got response from chatbot >> turn +1
 
 
     results = {
-        "response": result_conv,
+        "response": message,
         "similarity": result_mrpc,
         "correct": result_cola,
         "persona": personality_decoded,
