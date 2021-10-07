@@ -60,12 +60,11 @@ while True:
             turn = 0
 
     results = {
-        "response": message,
+        "message": message,
         "similarity": similarity,
-        "correct": acceptability,
+        "acceptability": acceptability,
         "persona": chatbot.get_personality(),
-        # "history" : [tokenizer.decode(line) for line in chatbot.history],
-        "count": turn,
+        "turn": turn,
         "spell": result_spell if result_spell.lower() != sentence else ["nothing to change!"],
         "persona_changed" : isChanged
     }
