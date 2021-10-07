@@ -38,11 +38,11 @@ def laod_dataset(args, tokenizer) -> None:
     if args.history_cache and os.path.isfile(args.history_cache):
         history = pickle_load(args.history_cache)
     else:
-        history = [ dialog["utterances"][-1]["history"] for dataset in dataset.values() for dialog in dataset ]
+        history = [dialog["utterances"][-1]["history"] for dataset in dataset.values() for dialog in dataset]
         pickle_save(path="./cache/history_cache", data=history)
 
     # load utterance
-    utterances = [ dialog["utterances"] for dataset in dataset.values() for dialog in dataset ]
+    utterances = [dialog["utterances"] for dataset in dataset.values() for dialog in dataset]
 
     return personalities, utterances, history
 
@@ -83,7 +83,7 @@ class Chatbot:
         self.history = []
 
 
-    def send_message(self, sentence : str) -> str:
+    def send_message(self, sentence: str) -> str:
         '''Receive user input with Persona and send the next utterance.'''
         self.history.append(self.tokenizer.encode(sentence))
         with torch.no_grad():

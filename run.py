@@ -4,19 +4,15 @@ from models.config import args
 from models import grammar
 
 from typing import List
-from dataclasses import dataclass, field
 import torch
 import json
 import os
 from pprint import pprint
-from tqdm import tqdm
 
 
 chatbot = Chatbot()
 MRPC = ContextSimilarity()
 CoLA = LinguisticAcceptability()
-
-
 
 
 turn_flag = False
@@ -45,9 +41,11 @@ while True:
 
     # predict next sentence
     message = chatbot.send_message(sentence)
+    human_history = chatbot.get_human_history()
+    gold_history = chatbot.get_gold_history()
 
-    similarity = MRPC.predict(chatbot.get_human_history(), chatbot.get_gold_history())
-    acceptability = CoLA.predict(chatbot.get_human_history())
+    similarity = MRPC.predict(human_history, gold_history)
+    acceptability = CoLA.predict(human_history)
 
     result_spell = grammar.correct(sentence)
 
@@ -92,7 +90,5 @@ while True:
 
     # pprint(results)  # 받아온 데이터를 다시 전송
     print(json.dumps(results, indent=4))
-
-
 
 
