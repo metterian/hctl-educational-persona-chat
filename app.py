@@ -29,7 +29,7 @@ class Message:
 
 app = FastAPI()
 chatbot = Chatbot()
-context_sim = ContextSimilarity()
+similarity = ContextSimilarity()
 linguistic = LinguisticAcceptability()
 
 
@@ -42,20 +42,24 @@ async def receive(item: Message):
     human_history = chatbot.get_human_history()
     gold_history = chatbot.get_gold_history()
 
-    similarity = context_sim.predict(human_history, gold_history)
-    acceptability = linguistic.predict(human_history)
-
+    similarity_score = similarity.predict(human_history, gold_history)
+    lang_score = linguistic.predict(human_history)
     correction = grammar.correct(sentence)
 
     response = Response(
         message=message,
-        similarity=similarity,
-        acceptability=acceptability,
+        similarity=similarity_score,
+        acceptability=lang_score,
         personality=chatbot.get_personality(),
         correction=correction,
     )
 
     return response
+
+
+@app.get("/info")
+async def persona():
+    return chatbot.get_personality()
 
 
 if __name__ == "__main__":
