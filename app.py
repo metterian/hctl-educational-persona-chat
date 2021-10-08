@@ -23,8 +23,7 @@ class Response:
 
 @dataclass
 class Message:
-    human: str
-    chatbot: Optional[str]
+    user_input: str
 
 
 app = FastAPI()
@@ -35,7 +34,7 @@ linguistic = LinguisticAcceptability()
 
 @app.post("/receive/")
 async def receive(item: Message):
-    raw_text = item.human
+    raw_text = item.user_input
     sentence = raw_text.strip()
 
     message = chatbot.send_message(sentence)
@@ -58,7 +57,7 @@ async def receive(item: Message):
 
 
 @app.get("/info")
-async def persona():
+async def persona_info():
     return chatbot.get_personality()
 
 
