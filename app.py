@@ -56,14 +56,15 @@ async def message(item: Message):
     print(f"Current Persona: {persona_string}")
     return response
 
-@app.get("/personalities/")
+@app.get("/personality/")
 async def read_persona():
     return chatbot.get_personality()
 
-@app.get('/personalities/shuffle/')
+@app.get('/personality/shuffle/')
 async def shuffle_persona():
     chatbot.shuffle()
     return "Success"
+
 
 
 if __name__ == "__main__":
