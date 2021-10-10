@@ -16,7 +16,7 @@ class Response:
     similarity: int
     acceptability: int
     personality: List[str]
-    turn: Optional[int]
+    # turn: Optional[int]
     correction: str
     changed: Optional[bool] = False
 
@@ -32,12 +32,12 @@ similarity = ContextSimilarity()
 linguistic = LinguisticAcceptability()
 
 
-@app.post("/receive/")
-async def receive(item: Message):
+@app.post("/message/")
+async def message(item: Message):
     raw_text = item.user_input
     sentence = raw_text.strip()
 
-    message = chatbot.send_message(sentence)
+    message = chatbot.send(sentence)
     human_history = chatbot.get_human_history()
     gold_history = chatbot.get_gold_history()
 
@@ -52,13 +52,18 @@ async def receive(item: Message):
         personality=chatbot.get_personality(),
         correction=correction,
     )
-
+    persona_string = '\n'.join(chatbot.get_personality())
+    print(f"Current Persona: {persona_string}")
     return response
 
-
-@app.get("/info")
-async def persona_info():
+@app.get("/personalities/")
+async def read_persona():
     return chatbot.get_personality()
+
+@app.get('/personalities/shuffle/')
+async def shuffle_persona():
+    chatbot.shuffle()
+    return "Success"
 
 
 if __name__ == "__main__":
