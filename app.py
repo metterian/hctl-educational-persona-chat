@@ -65,6 +65,10 @@ async def shuffle_persona():
     chatbot.shuffle()
     return "Success"
 
+@app.get('history/clear')
+async def clear_history():
+    chatbot.clear_history()
+    return "Success"
 
 
 if __name__ == "__main__":
