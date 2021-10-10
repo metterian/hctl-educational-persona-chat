@@ -84,7 +84,7 @@ class Chatbot:
 
 
     def send(self, sentence: str) -> str:
-        '''Receive user input with Persona and send the next utterance.'''
+        '''Receive user input(sentence) with Persona and send the next utterance.'''
         self.history.append(self.tokenizer.encode(sentence))
         with torch.no_grad():
             out_ids = sample_sequence(self.personality, self.history, self.tokenizer, self.model, args)
