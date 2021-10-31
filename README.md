@@ -38,18 +38,17 @@ This module can detect whether user speak properly in suggested situation or not
 - **Context Similarity**(상황 유사도): fine-tuinig the MRPC(Microsoft Research Paraphrase Corpus) dataset to detect user's context similarity in suggested situation.
 - **Linguistic Acceptability**(문장 허용도): fine-tuning the CoLA(The Corpus of Linguistic Acceptability) dataset to detect user's input is acceptable in human conversation.
 
-
+### Grammar Error Correction
+To give grammar feedback to english learner, We use GEC(Grammar Error Correction) as REST API.
+- [paper](https://ieeexplore.ieee.org/document/9102992)
 
 ## Folder Structure
     .
-    ├── .idea
-    ├── homepage                # Main page app
-    ├── redbttn_home            # Django project settings
-    ├── static                  # Static folder
-    ├── templates               # HTML template folder
-    ├── insta_login.py          # Selenium module code
-    ├── parser.py               # Instagram crawling code
-    ├── manage.py
+    ├── data_preprocessing      # data preprocess
+    ├── alf_test.py             # experiment for context detector
+    ├── app.py                  # REST API code
+    ├── kakao.py                # REST API code for Kakao Channel
+    ├── run.py                  # running PEEP-Talk
     ├── requirements.txt
     ├── LICENSE
     └── README.md
@@ -68,9 +67,8 @@ python kakao.py
 ```
 
 
-## Video
-- [PC Version](https://youtu.be/w9NuSj_xY1o)
-- [Mobile Version](https://youtu.be/pgPuoi7n1Uc)
+## Demo Video
+- [PC Version](https://youtu.be/Mma23gbCMAU)
 
 
 
