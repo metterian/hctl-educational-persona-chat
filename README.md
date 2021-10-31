@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="https://pf.kakao.com/_FlDxgs"><img src="https://i.loli.net/2021/10/31/jIPeZOcNkg6nB8o.png" alt="PEEP-Talk Logo"></a>
+  <a href="https://pf.kakao.com/_FlDxgs"><img src="https://i.loli.net/2021/10/31/D8Kng1xrlOhHFqL.png" alt="PEEP-Talk Logo"></a>
 </h1>
 
 <h4 align="center">PEEP-Talk: Deep Learning-based English Education Platform for Personalized Foreign Language Learning</h4>
@@ -71,7 +71,8 @@ python kakao.py
 - [PC Version](https://youtu.be/Mma23gbCMAU)
 
 
-
+## Paper
+This project got Best Paper Award from HCTL(Human & Cognitive Language Technology: 한글 및 한국어 정보처리 학술대회) [paper](https://drive.google.com/file/d/1mbPDzUIMTQ7hDn8Dbx1B3k_dZwq08SLe/view?usp=sharing)
 
 
 ## License
