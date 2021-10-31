@@ -25,9 +25,7 @@ screenshot1             |  screenshot2
 :-------------------------:|:-------------------------:
 ![](https://i.loli.net/2021/10/31/nYtvxABGIHQsDL2.png)  |  ![](https://i.loli.net/2021/10/31/4BHTGFmatUACcP2.png)
 
-- screenshot1: This is an example of a screen of PEEP-Talk that can be used through the KakaoTalk channel. The answer of the conversation system to the user input, the result of the CD module, and the information on correcting grammar errors are provided in the form of feedback as shown in the figure above.
-- screenshot2: This is an example of a case where the CD module detects a conversation of a user out of context and changes the conversation topic, that is, a persona.
-
+<br/>
 
 
 ## Project interests
