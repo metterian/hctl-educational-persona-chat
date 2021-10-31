@@ -25,38 +25,20 @@ screenshot1             |  screenshot2
 :-------------------------:|:-------------------------:
 ![](https://i.loli.net/2021/10/31/nYtvxABGIHQsDL2.png)  |  ![](https://i.loli.net/2021/10/31/4BHTGFmatUACcP2.png)
 
-
-
-## Site
-
-### Home Page
-
+- screenshot1: This is an example of a screen of PEEP-Talk that can be used through the KakaoTalk channel. The answer of the conversation system to the user input, the result of the CD module, and the information on correcting grammar errors are provided in the form of feedback as shown in the figure above.
+- screenshot2: This is an example of a case where the CD module detects a conversation of a user out of context and changes the conversation topic, that is, a persona.
 
 
 
 ## Project interests
 
-### Front-end
+### Conversational Agent
+By considering persona as a situation, English conversation learning for each situation becomes possible. To make conversational agent model mainly, we use Hugging Face's [TransferTransfo](https://github.com/huggingface/transfer-learning-conv-ai) code.
 
-#### HLS Streaming
-- Need real-time video streaming technology to match the self-video studio concept
-- AWS CloudFront for simultaneous streaming to multiple connectors
-- Video JS
-#### Instagram Grid Style
-- Real-time synchronized Instagram feed layout
-#### Optimized for mobile(android & ios) and web
-- CSS for devices which has multiple resolutions
-- Video format with Android and iOS support
-
-### Back-end
-#### Crawling Bot
-- Develop a crawling bot for real-time Instagram feed synchronization
-- Modularize each function like a bot e.g. Log in, Crawling, Terminate
-#### Server
-- AWS EC2, Ubuntu 18.04
-- Crontab(crawling bot with real-time scheduling)
-
-
+### Context Detector
+This module can detect whether user speak properly in suggested situation or not. This module contains two BERT based models. Evaluate the conversation using the following two functions. Based on that score, we decide whether to change the conversation.
+- **Context Similarity**(상황 유사도): fine-tuinig the MRPC(Microsoft Research Paraphrase Corpus) dataset to detect user's context similarity in suggested situation.
+- **Linguistic Acceptability**(문장 허용도): fine-tuning the CoLA(The Corpus of Linguistic Acceptability) dataset to detect user's input is acceptable in human conversation.
 
 
 
@@ -76,33 +58,15 @@ screenshot1             |  screenshot2
 
 
 
-## Dependencies
-<img alt="python-3.7.7" src="https://img.shields.io/badge/python-3.7.7-blue"/>
-<img alt="django-2.2.5" src="https://img.shields.io/badge/Django-2.2.5-brightgreen"/>
-<img alt="chromedriver-79.0.3945" src="https://img.shields.io/badge/chromedriver-79.0.3945-blueviolet"/>
-
-
-
-to run parser.py:
-- download chromedriver, unzip, move to  `HOME_PATH/chromedriver` (mac os / linux)
-
-
-create a secret.json file with variables:
-
-```
-SECRET_KEY = 'secret_key_in_settings.py'
-username = 'instagram_username'
-password = 'instagram_password'
-```
 
 ## Run
-to make instagram database using crawling:
+to interact with PEEP-talk :
 ```
-python3 parser.py
+python run.py
 ```
-to run server:
+to kakao server:
 ```
-python3 manage.py runserver
+python kakao.py
 ```
 
 
@@ -111,38 +75,8 @@ python3 manage.py runserver
 - [Mobile Version](https://youtu.be/pgPuoi7n1Uc)
 
 
-## Skill
-<p align="left">
-    <img alt="python" src="https://img.shields.io/badge/Python- -black"/>
-    <img alt="python-3.7.7" src="https://img.shields.io/badge/CSS-%20-blue"/>
-    <img alt="" src="https://img.shields.io/badge/HTML-%20-orange"/>
-    <img alt="javascript" src="https://img.shields.io/badge/JavaScript-%20-yellow"/>
-    <img alt="JQuery" src="https://img.shields.io/badge/JQuery- -blue"/>
-    <img alt="hls" src="https://img.shields.io/badge/HLS-%20-red"/>
-    <img alt="videojs" src="https://img.shields.io/badge/VideoJS-%20-yellowgreen"/>
-    <img alt="sqlite3" src="https://img.shields.io/badge/sqlite3- -blue"/>
-    <img alt="selenuum" src="https://img.shields.io/badge/selenuum- -black"/>
-    <img alt="beautifulsoup4" src="https://img.shields.io/badge/beautifulsoup4- -green"/>
-    <img alt="AWS" src="https://img.shields.io/badge/AWS-%20-orange"/>
-</p>
 
 
-## Wiki
-📕[WIKI](https://www.notion.so/Back-end-fc842cd3273a4e10b82a9e7d550826ae)
-
-The wiki include concerns about technical issues and solutions to the development of the homepage.
-
-## Reference
-- [VideoJS](https://videojs.github.io/videojs-contrib-hls/)
-
-- [Web Scraping Instagram with Selenium](https://medium.com/analytics-vidhya/web-scraping-instagram-with-selenium-b6b1f27b885) | by Mariyasha | Analytics Vidhya | Medium
-- [Automate TINDER with Python tutorial](https://github.com/aj-4/tinder-swipe-bot) | AJ-4 | Youtube
-
-- [Django  Project Deploy - 1. AWS](https://nachwon.github.io/django-deploy-1-aws/) | nachwon
-
-- [Amazon AWS :: Configuring HLS Streaming with Cloudfront](https://salesmore.tistory.com/851) | SalesMore
-
-- [Building Video Streaming Services (AWS s3/cloudFront, HLS, video.js)](http://lab.naminsik.com/3960) | Dev. Nam Lab.
 
 ## License
 The MIT License
