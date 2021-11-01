@@ -55,6 +55,36 @@ To give grammar feedback to english learner, We use GEC(Grammar Error Correction
 
 
 
+## Metric
+### Experiment Setting
+
+| Model   | Epoch | Batch size | Learning rate | Sequence length |
+|---------|:-----:|:----------:|:-------------:|:---------------:|
+| BERT    |   5   |     16     |     2e-05     |       256       |
+| ALBERT  |   5   |     32     |     2e-05     |       128       |
+| RoBERTa |   5   |     16     |     3e-05     |       256       |
+| XLNet   |   5   |     32     |     5e-05     |       256       |
+
+
+### Context Detecotr Metric Result
+| Model   |  MRPC |
+|---------|:-----:|
+| BERT    | 0.876 |
+| ALBERT  | 0.884 |
+| RoBERTa | 0.923 |
+| XLNet   | 0.928 |
+
+
+### CoLA Result
+|         |    CoLA    |       |
+|---------|:----------:|-------|
+| Model   | Validation |  Test |
+| BERT    |    0.812   | 0.820 |
+| ALBERT  |    0.728   | 0.736 |
+| RoBERTa |    0.739   | 0.755 |
+| XLNet   |    0.851   | 0.870 |
+
+
 
 ## Run
 to interact with PEEP-talk :
