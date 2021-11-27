@@ -104,6 +104,17 @@ python kakao.py
 ## Paper
 This project got Best Paper Award from HCTL(Human & Cognitive Language Technology: 한글 및 한국어 정보처리 학술대회) [paper](https://drive.google.com/file/d/1mbPDzUIMTQ7hDn8Dbx1B3k_dZwq08SLe/view?usp=sharing)
 
+## Citation
+```
+@inproceedings{lee2021peep,
+  title={PEEP-Talk: Deep Learning-based English Education Platform for Personalized Foreign Language Learning},
+  author={Lee, SeungJun and Jang, Yoonna and Park, Chanjun and Kim, Minwoo and Yahya, Bernardo N and Lim, Heuiseok},
+  booktitle={Annual Conference on Human and Language Technology},
+  pages={293--299},
+  year={2021},
+  organization={Human and Language Technology}
+}
+
 
 ## License
 The MIT License
