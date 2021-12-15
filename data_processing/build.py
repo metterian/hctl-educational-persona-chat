@@ -102,7 +102,7 @@ situ_persona = {
 def sample_candidate(candidates = translations, num = 18):
     return random.sample(candidates, num)
 # %%
-dialogue = []
+data = []
 
 for situation, persona in situ_persona.items():
     filtered_situation = trans[trans['상황'].str.contains(situation)]
@@ -117,7 +117,7 @@ for situation, persona in situ_persona.items():
                 "candidates" : candidates ,
                 "history" : conversation[:i+1]
             })
-        dial_entry = {
+        dialgue_entry = {
             "personality": persona,
             "utterances": utterances
                 }
