@@ -1,0 +1,158 @@
+[
+	{
+		"immigration checkpoint": [
+			"i have a pasport.",
+			"i am first visit in singapore.",
+			"i will be staying at the hotel.",
+			"i will be staying for three days."
+		]
+	},
+	{
+		"in a taxi": [
+			"i'd like to go to the hotel.",
+			"it is 20 minutes from here.",
+			"we will be there soon.",
+			"it's 19 dollars."
+		]
+	},
+	{
+		"hotel check-in": [
+			"my name is zoomma.",
+			"i want to check in.",
+			"your room number is 567.",
+			"check out time is 12 am."
+		]
+	},
+	{
+		"at a restaurant": [
+			"i have a table for two people.",
+			"this restaurant is my first time here.",
+			"i'll have irish beef steak.",
+			"i want to get some more water"
+		]
+	},
+	{
+		"getting a dessert": [
+			"dinner was great.",
+			"i want to eat chocolate cake for dessert.",
+			"i need four cups of coffee.",
+			"i want to eat strawberry cake."
+		]
+	},
+	{
+		"asking for directions": [
+			"i am looking for hotel.",
+			"it takes 5 minutes.",
+			"go along this road untill you get to the 5th avenue.",
+			"the hotel is not far away at all"
+		]
+	},
+	{
+		"at a shopping mall": [
+			"long-sleeve shirts are right here.",
+			"long-sleeve shirts are 15 dollars each.",
+			"the fitting room is over there.",
+			"long-sleeve shirts has large size."
+		]
+	},
+	{
+		"hotel check-out": [
+			"i want to check out.",
+			"my name is zoomma.",
+			"i did not take anything from the minibar.",
+			"i'll pay with credit card.",
+			"everything was great."
+		]
+	},
+	{
+		"checking in at the airport": [
+			"i have ticket and passport.",
+			"i have one bag.",
+			"i have one small bags with me.",
+			"i would like a window sea."
+		]
+	},
+	{
+		"in flight": [
+			"i want to have some water.",
+			"i want to have some more peanuts.",
+			"i want to eat chicken.",
+			"i need one more blanket."
+		]
+	},
+	{
+		"currency exchange": [
+			"i would like to exchange korean won into dollars.",
+			"i want to have three 100 dollar bills",
+			"my phone number is 010-9250-0676.",
+			"i will go to america"
+		]
+	},
+	{
+		"renting a car": [
+			"i'd like to rent a car",
+			"compact is 12 dollars, midsize is 24 dollars, and vans are 40 dollars a day",
+			"i want to get a compact car.",
+			"i will rent the car three days.",
+			"insurance is 10 dollars a day."
+		]
+	},
+	{
+		"making a hotel reservation": [
+			"i would like to make a reservation for this weekend",
+			"we will probably stay for one night.",
+			"people will be two of us.",
+			"we need twin beds.",
+			"my name is zoomma."
+		]
+	},
+	{
+		"room service": [
+			"i want to have some breakfast.",
+			"i'd like some scrambled eggs, bacon and some toast.",
+			"i need some coffee.",
+			"it will take about 10 minutes."
+		]
+	},
+	{
+		"buying a camera": [
+			"i would like to buy a camera.",
+			"i would like to buy a samsung camera.",
+			"i want to see blue one.",
+			"the camera 250 dollars.",
+			"it is on sale."
+		]
+	},
+	{
+		"at a supermarket": [
+			"i am looking for the fruit section.",
+			"they are on aisle four.",
+			"today is on sale the strawberries and orange are on sale.",
+			"some asian foods on aisle 11."
+		]
+	},
+	{
+		"in a hospital": [
+			"i'm not feeling well now.",
+			"i have got a headache and a fever.",
+			"i have been a headache about 2 days. ",
+			"sometimes, i have a cough."
+		]
+	},
+	{
+		"getting a souvenir": [
+			"t-shrits are right over here.",
+			"i think my friend is a bit taller than you",
+			"necklace is 120 dollars.",
+			"i will need a large."
+		]
+	},
+	{
+		"asking someone to take a photo": [
+			"just show me what to do with the camera.",
+			"i take you photo.",
+			"all right say cheese",
+			"my phone's battery is low."
+		]
+	}
+]

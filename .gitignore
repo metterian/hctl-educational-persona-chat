@@ -1,6 +1,6 @@
 .vscode
 experiments/
-data/
+data/personachat_self_original.json
 dataset_cache*
 runs/
 ParlAI/
