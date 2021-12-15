@@ -47,7 +47,7 @@ def laod_dataset(args, tokenizer) -> None:
     return personalities, utterances, history
 
 
-def shuffle_inputs(personalities, utterances, gold_history) -> None:
+def shuffle_inputs(personalities, utterances, gold_history):
     '''Shuffle the inputs which are persona, utterance and history by the persona index'''
     shuffle_idx = random.choice(range(len(personalities)))
     personality = personalities[shuffle_idx]
@@ -83,8 +83,8 @@ class Chatbot:
         self.history = []
 
 
-    def send_message(self, sentence: str) -> str:
-        '''Receive user input with Persona and send the next utterance.'''
+    def send(self, sentence: str) -> str:
+        '''Receive user input(sentence) with Persona and send the next utterance.'''
         self.history.append(self.tokenizer.encode(sentence))
         with torch.no_grad():
             out_ids = sample_sequence(self.personality, self.history, self.tokenizer, self.model, args)
@@ -93,7 +93,7 @@ class Chatbot:
             out_text = self.tokenizer.decode(out_ids, skip_special_tokens=True)
         return out_text
 
-    def shuffle(self):
+    def shuffle(self) -> None:
         self.personality, self.utterance, self.gold_history = shuffle_inputs(self.personalities, self.utterances, self.gold_histories)
 
     def decode(self, tokens: List[List[str]]) -> List[str]:
