@@ -117,7 +117,14 @@ for situation, persona in situ_persona.items():
                 "candidates" : candidates ,
                 "history" : conversation[:i+1]
             })
-        dialgue_entry = {
+        dialogue_entry = {
             "personality": persona,
             "utterances": utterances
                 }
+        data.append(dialogue_entry)
+
+
+with open('test_dataset.json', 'w+') as fp:
+    json.dump({'train': data, 'valid': data}, fp)
+
+# %%
