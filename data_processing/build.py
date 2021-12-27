@@ -3,18 +3,25 @@ import pandas as pd
 import json
 import sys
 import os
-from tqdm.auto import tqdm
 import time
 import re
 import random
+import string
 #%%
 data_path = os.path.join(os.path.pardir, 'data/translation_eng_kor.xlsx')
 trans = pd.read_excel(data_path, engine='openpyxl')
 #%%
-def preprocessing(sentence):
-    sentence = re.sub('([.,!?()])', r' \1 ', sentence)
-    sentence = re.sub('\s{2,}', ' ', sentence)
-    return sentence
+def is_number(text):
+    text = text.translate(str.maketrans('', '', string.punctuation)) # replace the punctuation
+    return text.isdigit()
+
+def space_before_eos(text):
+    text = text.translate(str.maketrans({key: " {0}".format(key) for key in string.punctuation}))
+    return text
+
+def preprocess(sentence):
+
+
 
 #%%
 trans['번역문'] = trans['번역문'].str.lower()
@@ -97,8 +104,7 @@ situ_persona = {
         "let's order then. I am starving."
 
     ]
-}
-#%%
+}#%%
 def sample_candidate(candidates = translations, num = 18):
     return random.sample(candidates, num)
 # %%
@@ -117,7 +123,13 @@ for situation, persona in situ_persona.items():
                 "candidates" : candidates ,
                 "history" : conversation[:i+1]
             })
-        dialgue_entry = {
+        dialogue_entry = {
             "personality": persona,
             "utterances": utterances
                 }
+        data.append(dialogue_entry)
+
+# %%
+with open('test_dataset.json', 'w+') as fp:
+    json.dump(data, fp, indent=4)
+# %%
