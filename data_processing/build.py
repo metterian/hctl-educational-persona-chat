@@ -7,25 +7,24 @@ import time
 import re
 import random
 import string
+import spacy
 #%%
 data_path = os.path.join(os.path.pardir, 'data/translation_eng_kor.xlsx')
 trans = pd.read_excel(data_path, engine='openpyxl')
+nlp = spacy.load("en_core_web_trf")
 #%%
-def is_number(text):
-    text = text.translate(str.maketrans('', '', string.punctuation)) # replace the punctuation
-    return text.isdigit()
 
-def space_before_eos(text):
-    text = text.translate(str.maketrans({key: " {0}".format(key) for key in string.punctuation}))
-    return text
+def space_before_eos(sentence: str, tokenizer = nlp):
+    table = str.maketrans({key: " {0} ".format(key) for key in string.punctuation})
+    doc = tokenizer(sentence)
+    tokens = [token.text.translate(table) if token.pos_ == 'PUNCT' else token.text for token in doc ]
+    sentence = " ".join(tokens)
 
-def preprocess(sentence):
-
-
+    return sentence
 
 #%%
+trans['번역문'] = trans['번역문'].apply(space_before_eos)
 trans['번역문'] = trans['번역문'].str.lower()
-trans['번역문'] = trans['번역문'].apply(preprocessing)
 
 translations = trans['번역문'].to_list()
 
