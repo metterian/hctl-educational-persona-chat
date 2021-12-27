@@ -8,14 +8,22 @@ import re
 import random
 import string
 import spacy
+from tqdm import tqdm, tqdm_pandas
+from setproctitle import setproctitle
+tqdm.pandas()
+setproctitle('joon_persona')
+#%%
+
+spacy.prefer_gpu(4) # set gpu setting
+nlp = spacy.load("en_core_web_trf", disable = ["tok2vec", "parser", "attribute_ruler", "lemmatizer"])
+
 #%%
 data_path = os.path.join(os.path.pardir, 'data/translation_eng_kor.xlsx')
 trans = pd.read_excel(data_path, engine='openpyxl')
-nlp = spacy.load("en_core_web_trf")
 #%%
 
 def space_before_eos(sentence: str, tokenizer = nlp):
-    table = str.maketrans({key: " {0} ".format(key) for key in string.punctuation})
+    table = str.maketrans({key: " {0}".format(key) for key in string.punctuation})
     doc = tokenizer(sentence)
     tokens = [token.text.translate(table) if token.pos_ == 'PUNCT' else token.text for token in doc ]
     sentence = " ".join(tokens)
@@ -23,7 +31,8 @@ def space_before_eos(sentence: str, tokenizer = nlp):
     return sentence
 
 #%%
-trans['번역문'] = trans['번역문'].apply(space_before_eos)
+trans['번역문'] = trans['번역문'].progress_apply(space_before_eos)
+# trans['번역문'] = trans['번역문'].apply(space_before_eos)
 trans['번역문'] = trans['번역문'].str.lower()
 
 translations = trans['번역문'].to_list()
