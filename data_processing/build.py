@@ -18,9 +18,14 @@ setproctitle('joon_persona')
 spacy.prefer_gpu(4) # set gpu setting
 nlp = spacy.load("en_core_web_trf", disable = ["tok2vec", "parser", "attribute_ruler", "lemmatizer"])
 
+
+# make absolute path from project path
+def get_absolute_path(relative_path: str) -> str:
+    return os.path.join(os.path.pardir, relative_path)
+
 #%%
 # load dataset
-data_path = os.path.join(os.path.pardir, 'data/translation_eng_kor.xlsx')
+data_path = get_absolute_path('data/translation_eng_kor.xlsx')
 trans = pd.read_excel(data_path, engine='openpyxl')
 #%%
 # preprocess the text
@@ -37,7 +42,7 @@ trans['번역문'] = trans['번역문'].progress_apply(space_before_eos)
 # trans['번역문'] = trans['번역문'].apply(space_before_eos)
 trans['번역문'] = trans['번역문'].str.lower()
 #%%
-data_path = os.path.join(os.path.pardir, 'data/translation_eng_kor_eos.xlsx')
+data_path = get_absolute_path('data/translation_eng_kor_eos.xlsx')
 trans = pd.read_excel(data_path, engine='openpyxl')
 translations = trans['번역문'].to_list()
 #%%
@@ -46,75 +51,9 @@ situ_count = trans.groupby('상황').count().sort_values(by='소분류', ascendi
 situ_count['대화수'] = situ_count['번역문'] / 4
 situations = situ_count.head(15).index.tolist() # 대화수 상위 15개의 상황
 # %%
-situ_persona = {
-    '직장에서의 일상 대화': [
-        'I work at a company.',
-        'I work with my boss, colleagues, and subordinates.',
-        'I have a business conversation.'
-        ],
-    '찬성 및 반대': [
-        "I'm in a meeting",
-        "Pros and cons are divided.",
-        'I have a business conversation.',
-        ],
-    '취직 면접 상황': [
-        "I'm unemployed.",
-        "I'm looking for a job.",
-        "I'm having an interview.",
-        'I have a business conversation.',
-        ],
-    # '회의 관련': [],
-    # '의견 교환하기': [],
-    '학교생활': [
-        'i just took a quiz',
-        'i have a test.'
-        'i have a family road trip planned for the western u.s',
-        'i attend the class.'
-        ],
-    '원하는 스타일에 대해 점원 or 친구와 대화 시술 전/시술 시/시술 후 대화': [
-        'I came to the hair salon to do my hair.',
-        'i have a friend.',
-        'I want to dye my hair.'],
-    '제안 및 협상하기': [
-        "i am worried that our company's mobile phone sales are declining",
-        "I have a business conversation.",
-        "I'm negotiating with business customers.",
-        "I propose a contract."
-        ],
-    'CS/고객 상담': [
-        "I'm a customer counselor.",
-        "I respond to customer requests.",
-        "The phone number is 000-0000-0000.",
-        "the custormer ordered product"
-        ],
-    '마케팅/홍보': [
-        "The project proposal is due tomorrow,",
-        "A new product was released last week.",
-        "I want to negotiate the price.",
-        "I want to promote the released product."
-        ],
-    '증상을 묻고 답하는 상황': [
-        'i have a headache.'
-        'I need medical consultation.',
-        "I'm seeing a doctor."],
-    '인사관리': [
-        'I will only be able to work till the end of this week',
-        'I will have to take an early leave',
-        'About the sign up for voluntary resignation being conducted this time',
-        'I am not confident with sales'],
-    # '경영/사무': [],
-    'IT/컴퓨터 (수리, 소프트웨어 설치 등)': [
-        "I think the internet speed has slowed down lately.",
-        "the IT department takes care of all things related to computers.",
-        "Due to the low specs of the computer, our work efficiency decreased."
-        ],
-    '음식 먹고 맛 평가하는 상황' : [
-        "I'm eating food.",
-        "I am evaluating after eating food.",
-        "let's order then. I am starving."
+with open('')
 
-    ]
-}
+situ_persona =
 #%%
 def sample_candidate(candidates = translations, num = 18):
     return random.sample(candidates, num)
