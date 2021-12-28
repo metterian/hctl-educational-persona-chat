@@ -34,21 +34,26 @@ trans = pd.read_excel(data_path, engine="openpyxl")
 #%%
 
 #%%
+def check_punctuation(words):
+    punctuation = [".", ","]
+    return [word for word in words if word in punctuation]
+
+
 # preprocess the text
 def space_before_eos(sentence: str, tokenizer=nlp):
     table = str.maketrans({".": " .", ",": " ,"})
     sentence = sentence.lower().split()
     for i, word in enumerate(sentence):
-        for token in tokenizer(word):
-            if token.pos_ == "PUNCT":
-                sentence[i] = sentence[i].translate(table)
+        if check_punctuation(word):
+            for token in tokenizer(word):
+                if token.pos_ == "PUNCT":
+                    sentence[i] = sentence[i].translate(table)
     return " ".join(sentence)
 
 
 #%%
 trans["번역문"] = trans["번역문"].progress_apply(space_before_eos)
 # trans['번역문'] = trans['번역문'].apply(space_before_eos)
-trans["번역문"] = trans["번역문"].str.lower()
 #%%
 trans.to_excel(get_absolute_path("data/translation_eng_kor_eos.xlsx"))
 #%%
@@ -71,7 +76,6 @@ with open(situation_label_path) as fp:
 # space the punctuation in <eos>
 for situation, description in situation_labels.items():
     description = list(map(space_before_eos, description))
-    description = list(map(lambda sentence: sentence.lower(), description))
     situation_labels[situation] = description
 
 #%%
@@ -84,13 +88,12 @@ data = []
 
 for situation_label, persona in situation_labels.items():
     situation = trans[trans["상황"].str.contains(situation_label)]
+    candidates = trans[~trans["상황"].str.contains(situation_label)]
     conversations = situation.groupby("Set Nr.")["번역문"].apply(list).tolist()
 
     for conversation in conversations:
         utterances = []
-        # conversation.append(random.sample(conversations, 1)[0][-1])
-        for i in range(0, len(conversation) - 1):
-            # add next utterance
+        for i in range(len(conversation) - 1):
             candidates = sample_candidate() + [conversation[i + 1]]
             utterances.append(
                 {"candidates": candidates, "history": conversation[: i + 1]}
