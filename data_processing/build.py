@@ -1,16 +1,11 @@
 #%%
 import pandas as pd
 import json
-import sys
 import os
-import time
-import re
 import random
-import string
 import spacy
-from tqdm import tqdm, tqdm_pandas
+from tqdm import tqdm
 from setproctitle import setproctitle
-from spacy.lang.en import English
 
 #%%
 # environment setting
@@ -88,13 +83,14 @@ data = []
 
 for situation_label, persona in situation_labels.items():
     situation = trans[trans["상황"].str.contains(situation_label)]
-    candidates = trans[~trans["상황"].str.contains(situation_label)]
+    top_situation = trans[trans["상황"].str.contains("마케팅/홍보")]["대분류"].iloc[0]
+    candidates = trans[~trans["대분류"].str.contains(situation_label)]["번역문"].to_list()
     conversations = situation.groupby("Set Nr.")["번역문"].apply(list).tolist()
 
     for conversation in conversations:
         utterances = []
         for i in range(len(conversation) - 1):
-            candidates = sample_candidate() + [conversation[i + 1]]
+            candidates = sample_candidate(candidates) + [conversation[i + 1]]
             utterances.append(
                 {"candidates": candidates, "history": conversation[: i + 1]}
             )
