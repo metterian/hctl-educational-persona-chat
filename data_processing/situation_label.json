@@ -55,7 +55,7 @@
         "About the sign up for voluntary resignation being conducted this time.",
         "I am not confident with sales."
     ],
-    "IT/컴퓨터 (수리, 소프트웨어 설치 등)": [
+    "IT/컴퓨터 (수리": [
         "I think the internet speed has slowed down lately.",
         "the IT department takes care of all things related to computers.",
         "Due to the low specs of the computer, our work efficiency decreased."
@@ -64,5 +64,131 @@
         "I'm eating food.",
         "I am evaluating after eating food.",
         "let's order then. I am starving."
+    ],
+    "^비행기 안" :[
+        "i'm in the airplane.",
+        "i'm traveling to New york.",
+        "I'm sitting in the airplane seat."
+    ],
+    "화장품 가게" : [
+        "I'm at a cosmetics store.",
+        "I'm choosing cosmetics.",
+        "I'm going to buy cosmetics."
+    ],
+    "회의 일정 잡기" : [
+        "I'd like to schedule a meeting.",
+        "I coordinate the schedule."
+    ],
+    "서점, 문구점" : [
+        "I'm in the book store",
+        "I'm at the stationery store.",
+        "I'm trying to buy stationery."
+    ],
+    "주문한 상품의 배송 상태 문의/응답" : [
+        "I orderd the product.",
+        "I am inquiring about the delivery status."
+    ],
+    "복용법에 대해 얘기하는 상황" : [
+        "We're talking about how to take it.",
+        "Talking to the pharmacist.",
+        "I'm curious about the dosage."
+    ],
+    "면세점 이용" : [
+        "I'm using a duty-free shop.",
+        "I'm curious about using the duty-free shop.",
+        "I'm at the duty-free shop."
+    ],
+    "^면세점$" : [
+        "I'm using a duty-free shop.",
+        "I'm curious about using the duty-free shop.",
+        "I'm at the duty-free shop."
+    ],
+    "출장을 가기 위해 업무적으로 준비해야 하는 상황" : [
+        "I'm going on a business trip.",
+        "I have to prepare for a business trip."
+    ],
+    "주문 내역에 대해 수정이 필요한 상황" : [
+        "The order details need to be revised.",
+        "I ordered the product.",
+        "I'm talking to custormer service agent."
+    ],
+    "입원/퇴원" : [
+        "I have been hospitalized.",
+        "I am leaving the hospital.",
+        "I'm talking to the patients.",
+        "I'm talking about hospitalization and discharge."
+    ],
+    "출장 경비처리를 해야 하는 상황" : [
+        "I have to pay for the business trip expenses.",
+        "A few days ago went on a business trip.",
+        "I'm talking to the accounting staff."
+    ],
+    "제품/배송에 특별한" : [
+        "I'm making a special request for product and delivery.",
+        "I'm trying to get a product.",
+        "It is asking the seller."
+    ],
+    "운동 레슨을 받는 상황" : [
+        "I'm taking exercise lessons.",
+        "I'm working out."
+    ],
+    "미술관, 박물관에서 대화" : [
+        "I'm talking at art galleries and museums.",
+        "I'm a museum."
+    ],
+    "제품에 문제가 있는 상황" : [
+        "I bought something.",
+        "There is a problem with the product.",
+        "I'm talking to a counselor."
+    ],
+    "극장, 공연장에서 관람 전, 관람 후 대화" : [
+        "I'm in the theater.",
+        "I'm talking at the theater.",
+        "I'm watching a play."
+    ],
+    "간단한 구급처치를 위한 방법 질문 및 약품 구매하는 상황" : [
+        "I want to do a simple first aid.",
+        "I'm asking questions for first aid.",
+        "I'm buying medicine for first aid.",
+        "I'm talking to a pharmacist."
+    ],
+    "관공서/행정 업무보는 상황" : [
+        "I'm in a government office.",
+        "I am working on administrative affairs.",
+        "I'm talking to a public official."
+    ],
+    "마트 (물건 찾기, 즉석/신선 제품)" : [
+        "I'm at the mart.",
+        "I'm looking for a product at the mart.",
+        "I'm looking for an instant product.",
+        "I'm looking for a fresh product."
+    ],
+    "객실 내 문제 해결 요청" : [
+        "I'm tied to a hotel.",
+        "There is a problem with the room.",
+        "I am requesting to solve the room problem."
+    ],
+    "환전 및 여행자 수표가 필요한 상황" : [
+        "I want to exchange money.",
+        "I need a check.",
+        "I am traveling."
+    ],
+    "가격 묻기, 흥정" : [
+        "I want to buy something.",
+        "I'm asking the price.",
+        "I want a bargain."
+    ],
+    "여행 일정 변경하는 상황" : [
+        "I'm going to go on a trip.",
+        "I would like to change my itinerary."
+    ],
+    "접수/수납하는" : [
+        "I'd like to apply to the hospital.",
+        "I want to pay in the hospital.",
+        "I'm in the hospital."
+    ],
+    "택시": [
+        "I am taking a taxi.",
+        "I'm talking to the driver in the taxi."
     ]
 }
