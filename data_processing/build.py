@@ -21,7 +21,7 @@ def load_excel(file_path: str) -> pd.DataFrame:
     """
     It fetches Excel files and outputs them as Pandas.
     """
-    dataset_path = get_paradir_path(file_path, False)
+    dataset_path = get_paradir_path(file_path)
     dataset = pd.read_excel(dataset_path, engine="openpyxl")
     return dataset
 
@@ -71,9 +71,7 @@ def load_dataset() -> tuple:
     # dataset reload
     dialogue = load_excel("data/translation_eng_kor_eos.xlsx")
     # load situation labels
-    situation_label_path = get_paradir_path(
-        "data_processing/situation_label.json", False
-    )
+    situation_label_path = get_paradir_path("data_processing/situation_label.json")
     with open(situation_label_path) as fp:
         situation_labels = json.load(fp)
 
@@ -115,6 +113,14 @@ def match_situation() -> List[dict]:
     return dataset
 
 
+def save_dataset(dataset: str, shuffle=False, split=0.8):
+    dataset = random.shuffle(dataset) if shuffle else dataset
+    index = int(len(dataset) * 0.8)
+    dataset_file = {"train": dataset[:index], "valid": dataset[index:]}
+    with open("data/train_dataset.json", "w+") as fp:
+        json.dump(dataset, fp, indent=4)
+
+
 def main():
     nlp = spacy.load(
         "en_core_web_sm",  # set the tokenizer
@@ -122,10 +128,12 @@ def main():
     # set_config("joon_persona", 4)
     # preprocess_dataset()
     dataset = match_situation()
-    with open("test_dataset.json", "w+") as fp:
-        json.dump(dataset, fp, indent=4)
+    return dataset
 
 
+#%%
+dataset = main()
+#%%
 if __name__ == "__main__":
     main()
 
