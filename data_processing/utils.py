@@ -11,10 +11,8 @@ def get_paradir_path(path: str, relative=True) -> str:
     Get the file path including parents path
         - relative : for debugging
     """
-    if relative:
-        return os.path.join(os.path.pardir, path)
-    else:
-        return path
+
+    return os.path.join(os.path.pardir, path) if relative else path
 
 
 def check_punctuation(words):

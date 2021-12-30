@@ -21,7 +21,7 @@ def load_excel(file_path: str) -> pd.DataFrame:
     """
     It fetches Excel files and outputs them as Pandas.
     """
-    dataset_path = get_paradir_path(file_path)
+    dataset_path = get_paradir_path(file_path, False)
     dataset = pd.read_excel(dataset_path, engine="openpyxl")
     return dataset
 
@@ -71,7 +71,9 @@ def load_dataset() -> tuple:
     # dataset reload
     dialogue = load_excel("data/translation_eng_kor_eos.xlsx")
     # load situation labels
-    situation_label_path = get_paradir_path("data_processing/situation_label.json")
+    situation_label_path = get_paradir_path(
+        "data_processing/situation_label.json", False
+    )
     with open(situation_label_path) as fp:
         situation_labels = json.load(fp)
 
