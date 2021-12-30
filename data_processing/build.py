@@ -54,14 +54,6 @@ def sample_candidate(candidates: List, num: int = 18) -> List:
     Create a candidate sentence used to predict the next utterance answer.
     Samples 18 from candidates in different situations.
 
-    return:
-        List
-    example:
-        "my mom was single with 3 boys , so we never left the projects .",
-        "i try to wear all black every day . it makes me feel comfortable .",
-        "well nursing stresses you out so i wish luck with sister",
-        "..."
-
     """
     return random.sample(candidates, num)
 
