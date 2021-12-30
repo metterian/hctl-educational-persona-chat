@@ -7,7 +7,7 @@ import random
 import spacy
 from tqdm import tqdm
 from setproctitle import setproctitle
-from utils import get_absolute_path, space_before_eos
+from utils import get_paradir_path, space_before_eos
 
 #%%
 # environment setting
@@ -21,12 +21,12 @@ def load_excel(file_path: str) -> pd.DataFrame:
     """
     It fetches Excel files and outputs them as Pandas.
     """
-    dataset_path = get_absolute_path(file_path)
+    dataset_path = get_paradir_path(file_path)
     dataset = pd.read_excel(dataset_path, engine="openpyxl")
     return dataset
 
 
-def preprocess_dataset():
+def preprocess_dataset() -> None:
     """
     After loading the dataset, pre-process the lowercase and space the eos.
     And output the dataset as an Excel file.
@@ -35,15 +35,15 @@ def preprocess_dataset():
     trans = load_excel("data/translation_eng_kor.xlsx")
 
     trans["번역문"] = trans["번역문"].progress_apply(space_before_eos)
-    trans.to_excel(get_absolute_path("data/translation_eng_kor_eos.xlsx"))
+    trans.to_excel(get_paradir_path("data/translation_eng_kor_eos.xlsx"))
 
 
-def get_topk_situation(k: int) -> List:
+def get_topk_situation(dataset: pd.DataFrame, k: int) -> List:
     """
     This function outputs the top k situations based on the number of conversation turns.
     For data matching, data work is performed on the top k situations with a large number of conversation turns.
     """
-    situ_count = trans.groupby("상황").count().sort_values(by="소분류", ascending=False)
+    situ_count = dataset.groupby("상황").count().sort_values(by="소분류", ascending=False)
     situ_count["대화수"] = situ_count["번역문"] / 4
     situations = situ_count.head(k).index.tolist()  # 대화수 상위 15개의 상황
     return situations
@@ -71,11 +71,11 @@ def load_dataset() -> tuple:
     # dataset reload
     dialogue = load_excel("data/translation_eng_kor_eos.xlsx")
     # load situation labels
-    situation_label_path = get_absolute_path("data_processing/situation_label.json")
+    situation_label_path = get_paradir_path("data_processing/situation_label.json")
     with open(situation_label_path) as fp:
         situation_labels = json.load(fp)
 
-    # space the punctuation in <eos>
+    # preprocessing: space the punctuation in <eos>
     for situation, description in situation_labels.items():
         description = list(map(space_before_eos, description))
         situation_labels[situation] = description
@@ -117,9 +117,9 @@ def main():
     nlp = spacy.load(
         "en_core_web_sm",  # set the tokenizer
     )
-    set_config("joon_persona", 4)
-    preprocess_dataset()
-    # match_situation()
+    # set_config("joon_persona", 4)
+    # preprocess_dataset()
+    match_situation()
 
 
 if __name__ == "__main__":

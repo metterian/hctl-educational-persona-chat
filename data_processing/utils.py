@@ -6,9 +6,9 @@ nlp = spacy.load(
 )
 
 
-def get_absolute_path(path: str, relative=True) -> str:
+def get_paradir_path(path: str, relative=True) -> str:
     """
-    Refine the file path
+    Get the file path including parents path
         - relative : for debugging
     """
     if relative:
