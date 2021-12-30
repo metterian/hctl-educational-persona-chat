@@ -92,6 +92,10 @@ def load_dataset() -> tuple:
 
 
 def match_situation() -> List[dict]:
+    """
+    Match conversation with situation label.
+
+    """
     dataset = []
     dialogue, situation_labels = load_dataset()
     for situation_label, persona in situation_labels.items():
