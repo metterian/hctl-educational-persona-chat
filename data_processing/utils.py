@@ -1,10 +1,6 @@
 import os
 import spacy
 
-nlp = spacy.load(
-    "en_core_web_sm",  # set the tokenizer
-)
-
 
 def get_paradir_path(path: str, relative=True) -> str:
     """
@@ -21,11 +17,11 @@ def check_punctuation(words):
 
 
 # preprocess the text
-def space_before_eos(sentence: str, tokenizer=nlp):
+def space_before_eos(sentence: str, tokenizer):
     """
     Preprocessing function:
-    - Spaces before periods at end of sentences
-    - everything lowercase
+        - Spaces before periods at end of sentences
+        - everything lowercase
     """
     table = str.maketrans({".": " .", ",": " ,"})
     sentence = sentence.lower().split()
