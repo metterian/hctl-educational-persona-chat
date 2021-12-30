@@ -121,7 +121,9 @@ def main():
     )
     # set_config("joon_persona", 4)
     # preprocess_dataset()
-    match_situation()
+    dataset = match_situation()
+    with open("test_dataset.json", "w+") as fp:
+        json.dump(dataset, fp, indent=4)
 
 
 if __name__ == "__main__":
@@ -129,6 +131,4 @@ if __name__ == "__main__":
 
 
 # %%
-with open("test_dataset.json", "w+") as fp:
-    json.dump(dataset, fp, indent=4)
 # %%
