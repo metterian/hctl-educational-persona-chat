@@ -84,10 +84,8 @@ def load_dataset(args, tokenizer) -> tuple:
         situation_labels = json.load(fp)
 
     # preprocessing: space the punctuation in <eos>
-    for situation, description in situation_labels.items():
-        # description = list(map(space_before_eos, description))
-        situation_labels[situation] = space_before_eos(description, tokenizer)
-
+    for situation, descriptions in situation_labels.items():
+        situation_labels[situation] = [space_before_eos(description, tokenizer) for description in descriptions]
     return dialogue, situation_labels
 
 
@@ -120,8 +118,8 @@ def match_situation(args, tokenizer) -> List[dict]:
 
 def save_dataset(dataset: str, shuffle=False, split=0.8):
     """ Shuffle and split the dataset. """
-    dataset = random.shuffle(dataset) if shuffle else dataset
-    index = int(len(dataset) * 0.8)
+    random.shuffle(dataset) if shuffle else None
+    index = int(len(dataset) * split)
     dataset_file = {"train": dataset[:index], "valid": dataset[index:]}
     with open("data/situationchat_original.json", "w+") as fp:
         json.dump(dataset_file, fp, indent=4)
@@ -138,6 +136,7 @@ def build():
     # preprocess_dataset()
     tokenizer = load_tokenizer(args)
     dataset = match_situation(args, tokenizer)
+    save_dataset(dataset, shuffle=True)
     return dataset
 
 
