@@ -137,7 +137,12 @@ def train():
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Device (cuda or cpu)")
     parser.add_argument("--fp16", type=str, default="", help="Set to O0, O1, O2 or O3 for fp16 training (see apex documentation)")
     parser.add_argument("--local_rank", type=int, default=-1, help="Local rank for distributed training (-1: not distributed)")
+    parser.add_argument("--debug", type=bool, default=False, help="Debuging option")
     args = parser.parse_args()
+
+    if args.debug:
+        return None
+
 
     # logging is set to INFO (resp. WARN) for main (resp. auxiliary) process. logger.info => log main process only, logger.warning => log all processes
     logging.basicConfig(level=logging.INFO if args.local_rank in [-1, 0] else logging.WARN)
