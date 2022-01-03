@@ -1,4 +1,5 @@
 params:
+  model : gpt2
   max_history: 2
   no_sample : True
   max_length: 20
