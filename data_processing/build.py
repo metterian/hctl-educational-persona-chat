@@ -72,7 +72,7 @@ def load_dataset(args, tokenizer) -> tuple:
     returns :
         Dict
     example:
-        situation: ['description1','description2','description3','description4']
+        situation: ['<speaker1>','<speaker2>','<speaker1>','<speaker2>']
     """
     # dataset reload
     dialogue = load_excel("data/translation_eng_kor_eos.xlsx", args)
