@@ -64,7 +64,7 @@ def sample_candidate(candidates: List, num: int = 18) -> List:
     return random.sample(candidates, num)
 
 
-def load_dataset(args, tokenizer) -> tuple:
+def load_dataset(args, tokenizer):
     """
     The data set in which the preprocessing operation is completed and the data set labeled with the situation are retrieved, and preprocessing is performed.
     The output result is in dictionary form.
@@ -115,13 +115,44 @@ def match_situation(args, tokenizer) -> List[dict]:
             dataset.append(dialogue_entry)
     return dataset
 
+def match_situation_by_persona(args, tokenizer) -> List[dict]:
+    """
+    Match conversation with situation label.
+    No divergence persona
+    """
 
-def save_dataset(dataset: str, shuffle=False, split=0.8):
+    dataset = []
+    dialogue, situation_labels = load_dataset(args, tokenizer)
+    for situation_label, persona in situation_labels.items():
+        situation_label = situation_label.replace("(", r"\(")
+
+        is_contain = lambda text: dialogue[dialogue["상황"].str.contains(text)]
+        is_not_contain = lambda text: dialogue[~dialogue["대분류"].str.contains(text)]
+
+        situation = is_contain(situation_label)
+        top_situation = is_contain(situation_label)["대분류"].iloc[0]
+        candidates = is_not_contain(top_situation)["번역문"].to_list()
+        conversations = situation.groupby("Set Nr.")["번역문"].apply(list).tolist()
+
+        dialogue_entry = {"personality": persona, "utterances": []}
+        for conversation in conversations:
+            utterances = []
+            for i in range(len(conversation) - 1):
+                candidate = sample_candidate(candidates) + [conversation[i + 1]]
+                utterances.append(
+                    {"candidates": candidate, "history": conversation[: i + 1]}
+                )
+            dialogue_entry['utterances'] += utterances
+        dataset.append(dialogue_entry)
+    return dataset
+
+
+def save_dataset(file_name :str , dataset: dict, shuffle=False, split=0.8):
     """ Shuffle and split the dataset. """
     random.shuffle(dataset) if shuffle else None
     index = int(len(dataset) * split)
     dataset_file = {"train": dataset[:index], "valid": dataset[index:]}
-    with open("data/situationchat_original.json", "w+") as fp:
+    with open(f"data/{file_name}.json", "w+") as fp:
         json.dump(dataset_file, fp, indent=4)
 
 
@@ -135,8 +166,8 @@ def build():
     set_config(args)
     # preprocess_dataset()
     tokenizer = load_tokenizer(args)
-    dataset = match_situation(args, tokenizer)
-    save_dataset(dataset, shuffle=True)
+    dataset = match_situation_by_persona(args, tokenizer)
+    save_dataset(file_name = "situationchat_divergence", dataset = dataset, shuffle=True)
     return dataset
 
 
