@@ -264,8 +264,8 @@
         "I'm looking for a destination. ",
         "I'm talking about how to go."
     ] ,
-    "옷가게, 신발가게 (사이즈, 착용, 탈의실 등)": [
-        "I'm at the store.",
+    "옷가게, 신발가게": [
+        "I'm at the clothing store.",
         "I'm going to buy clothes and shoes.",
         "I am asking about product information."
     ] ,
@@ -319,7 +319,7 @@
         "I'm on a diet.",
         "I want to exercise."
     ] ,
-    "연예인 가십 (데이팅/영화/드라마)": [
+    "연예인 가십": [
         "We are talking about the movie.",
         "We are interested in celebrities."
     ] ,
