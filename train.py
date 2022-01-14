@@ -119,8 +119,8 @@ def get_data_loaders(args, tokenizer):
 
 def train():
     parser = ArgumentParser()
-    parser.add_argument("--dataset_path", type=str, default="", help="Path or url of the dataset. If empty download from S3.")
-    parser.add_argument("--dataset_cache", type=str, default='./dataset_cache', help="Path or url of the dataset cache")
+    parser.add_argument("--dataset_path", type=str, default="data/situationchat_original_augmented_dialgpt.json", help="Path or url of the dataset. If empty download from S3.")
+    parser.add_argument("--dataset_cache", type=str, default='', help="Path or url of the dataset cache")
     parser.add_argument("--model_checkpoint", type=str, default="gpt2", help="Path, url or short name of the model")
     parser.add_argument("--num_candidates", type=int, default=2, help="Number of candidates for training")
     parser.add_argument("--max_history", type=int, default=2, help="Number of previous exchanges to keep in history")
@@ -155,11 +155,15 @@ def train():
 
     logger.info("Prepare tokenizer, pretrained model and optimizer.")
     tokenizer_class = GPT2Tokenizer if "gpt2" in args.model_checkpoint else OpenAIGPTTokenizer # cant use Autotokenizer because checkpoint could be a Path
-    tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
+    # tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
+    tokenizer = tokenizer_class.from_pretrained('microsoft/DialoGPT-large')
+    # tokenizer = AutoTokenizer.from_pretrained('microsoft/DialoGPT-large')
+
 
 
     model_class = GPT2DoubleHeadsModel if "gpt2" in args.model_checkpoint else OpenAIGPTDoubleHeadsModel
-    model = model_class.from_pretrained(args.model_checkpoint)
+    # model = model_class.from_pretrained(args.model_checkpoint)
+    model = GPT2DoubleHeadsModel.from_pretrained('microsoft/DialoGPT-large')
     model.to(args.device)
     # Add special tokens if they are not already added
     add_special_tokens_(model, tokenizer)
