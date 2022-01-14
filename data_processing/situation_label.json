@@ -291,7 +291,11 @@
         "I'm looking for the location of the facility.",
         "I'm asking about the location of the facility."
     ] ,
-    "계산": [
+    "^계산$": [
+        "I bought something.",
+        "I'm going to pay for it."
+    ] ,
+    "계산 */ *포장할": [
         "I bought something.",
         "I'm going to pay for it."
     ] ,
@@ -341,7 +345,7 @@
         "There is a problem with food orders.",
         "I'm talking to the waiter."
     ] ,
-    "지하철 (역 찾기, 매표소, 노선 정보, 하차, 출구 찾기, 환승)": [
+    "^지하철": [
         "I am using the subway.",
         "I'm talking about the subway."
     ]
