@@ -9,6 +9,7 @@ from tqdm import tqdm
 from setproctitle import setproctitle
 from argparse import ArgumentParser
 from utils import get_paradir_path, space_before_eos
+from pprint import pprint
 
 #%%
 # environment setting
@@ -20,7 +21,7 @@ def load_tokenizer(args):
     tokenizer = spacy.load(
         "en_core_web_sm",  # set the tokenizer
     )
-    spacy.prefer_gpu(args.device_id)  # set gpu id
+    if args.gpu: spacy.prefer_gpu(args.device_id)  # set gpu id
     return tokenizer
 
 def load_excel(file_path: str, args) -> pd.DataFrame:
@@ -32,16 +33,16 @@ def load_excel(file_path: str, args) -> pd.DataFrame:
     return dataset
 
 
-def preprocess_dataset(args) -> None:
+def preprocess_dataset(args, tokenizer) -> None:
     """
     After loading the dataset, pre-process the lowercase and space the eos.
     And output the dataset as an Excel file.
     """
     # load dataset
-    trans = load_excel("data/translation_eng_kor.xlsx", args)
+    trans = load_excel("data/translation_eng_kor(fixed).xlsx", args)
 
-    trans["번역문"] = trans["번역문"].progress_apply(space_before_eos)
-    trans.to_excel(get_paradir_path("data/translation_eng_kor_eos.xlsx", args.debug))
+    trans["번역문"] = trans["번역문"].progress_apply(lambda text : space_before_eos(text,tokenizer))
+    trans.to_excel(get_paradir_path("data/translation_eng_kor_eos(fixed).xlsx", args.debug))
 
 
 def get_topk_situation(dataset: pd.DataFrame, k: int) -> List:
@@ -100,8 +101,9 @@ def match_situation(args, tokenizer) -> List[dict]:
         is_not_contain = lambda text: dialogue[~dialogue["대분류"].str.contains(text)]
 
         situation = is_contain(situation_label)
-        top_situation = is_contain(situation_label)["대분류"].iloc[0]
-        candidates = is_not_contain(top_situation)["번역문"].to_list()
+        pprint(situation['상황'].unique())
+        top_level = is_contain(situation_label)["대분류"].iloc[0]
+        candidates = is_not_contain(top_level)["번역문"].to_list()
         conversations = situation.groupby("Set Nr.")["번역문"].apply(list).tolist()
 
         for conversation in conversations:
@@ -130,8 +132,8 @@ def match_situation_by_persona(args, tokenizer) -> List[dict]:
         is_not_contain = lambda text: dialogue[~dialogue["대분류"].str.contains(text)]
 
         situation = is_contain(situation_label)
-        top_situation = is_contain(situation_label)["대분류"].iloc[0]
-        candidates = is_not_contain(top_situation)["번역문"].to_list()
+        top_level = is_contain(situation_label)["대분류"].iloc[0]
+        candidates = is_not_contain(top_level)["번역문"].to_list()
         conversations = situation.groupby("Set Nr.")["번역문"].apply(list).tolist()
 
         dialogue_entry = {"personality": persona, "utterances": []}
@@ -159,15 +161,16 @@ def save_dataset(file_name :str , dataset: dict, shuffle=False, split=0.8):
 def build():
     parser = ArgumentParser()
     parser.add_argument("--debug", type=bool, default=True, help="Debugging option for relative path.")
+    parser.add_argument("--gpu", type=bool, default=False, help="Device ID for Spacy tokenizer.")
     parser.add_argument("--device_id", type=int, default=4, help="Device ID for Spacy tokenizer.")
     parser.add_argument("--proc_title", type=str, default=f"{getpass.getuser()}_persona", help="Name process ID title. ")
     args = parser.parse_args()
 
     set_config(args)
-    # preprocess_dataset()
     tokenizer = load_tokenizer(args)
-    dataset = match_situation_by_persona(args, tokenizer)
-    save_dataset(file_name = "situationchat_divergence", dataset = dataset, shuffle=True)
+    # preprocess_dataset(args, tokenizer)
+    dataset = match_situation(args, tokenizer)
+    save_dataset(file_name = "situationchat_original(augmented)", dataset = dataset, shuffle=True)
     return dataset
 
 
