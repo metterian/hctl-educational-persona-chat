@@ -2,6 +2,7 @@
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
+
 import hydra
 from hydra.core.config_store import ConfigStore
 import logging
@@ -96,7 +97,7 @@ def sample_sequence(personality, history, tokenizer, model, cfg, current_output=
 cs = ConfigStore.instance()
 cs.store(name='chat_config', node=ChatConfig)
 
-@hydra.main(config_path="conf", config_name="personachat_config")
+@hydra.main(config_path="conf", config_name="situationchat_original")
 def run(cfg: ChatConfig) -> None:
     print(cfg.params)
     # parser = ArgumentParser()
@@ -128,9 +129,9 @@ def run(cfg: ChatConfig) -> None:
 
 
     if cfg.params.seed != 0:
-    	random.seed(cfg.params.seed)
-    	torch.random.manual_seed(cfg.params.seed)
-    	torch.cuda.manual_seed(cfg.params.seed)
+        random.seed(cfg.params.seed)
+        torch.random.manual_seed(cfg.params.seed)
+        torch.cuda.manual_seed(cfg.params.seed)
 
 
     logger.info("Get pretrained model and tokenizer")
@@ -143,7 +144,20 @@ def run(cfg: ChatConfig) -> None:
     logger.info("Sample a personality")
     dataset = get_dataset(tokenizer, cfg.files.dataset_path, cfg.files.dataset_cache)
     personalities = [dialog["personality"] for dataset in dataset.values() for dialog in dataset]
-    personality = random.choice(personalities)
+
+
+    # find string in list that matches the situation
+    def find_situation(situation, personalities):
+        '''find string in list that matches the situation'''
+        for personality in personalities:
+            if any(situation.lower() in tokenizer.decode(persona) for persona in personality):
+                return personality
+        return None
+
+
+    personality = find_situation(cfg.setting.situation, personalities) if cfg.setting.situation else random.choice(personalities)
+
+    # personality = random.choice(personalities)
     logger.info("Selected personality: %s", tokenizer.decode(chain(*personality)))
 
     history = []
