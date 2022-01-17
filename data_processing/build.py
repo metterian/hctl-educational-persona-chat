@@ -160,7 +160,8 @@ def save_dataset(file_name :str , dataset: dict, shuffle=False, split=0.8):
 
 def build():
     parser = ArgumentParser()
-    parser.add_argument("--debug", type=bool, default=True, help="Debugging option for relative path.")
+    parser.add_argument("--situation_data", type=str, default="data_processing/situation_annotation.json")
+    parser.add_argument("--debug", type=bool, default=True, help="De˝bugging option for relative path.")
     parser.add_argument("--gpu", type=bool, default=False, help="Device ID for Spacy tokenizer.")
     parser.add_argument("--device_id", type=int, default=4, help="Device ID for Spacy tokenizer.")
     parser.add_argument("--proc_title", type=str, default=f"{getpass.getuser()}_persona", help="Name process ID title. ")
