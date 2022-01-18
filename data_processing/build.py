@@ -10,7 +10,7 @@ from setproctitle import setproctitle
 from argparse import ArgumentParser
 from utils import get_paradir_path, space_before_eos
 from pprint import pprint
-
+from collections import Counter
 #%%
 # environment setting
 def set_config(args) -> None:
@@ -78,8 +78,9 @@ def load_dataset(args, tokenizer):
     # dataset reload
     dialogue = load_excel("data/translation_eng_kor_eos.xlsx", args)
     # load situation labels
+    situation_data_path = args.situation_data if args.situation_data else "data_processing/situation_label.json"
     situation_label_path = get_paradir_path(
-        "data_processing/situation_label.json", args.debug
+        situation_data_path, args.debug
     )
     with open(situation_label_path) as fp:
         situation_labels = json.load(fp)
@@ -89,21 +90,34 @@ def load_dataset(args, tokenizer):
         situation_labels[situation] = [space_before_eos(description, tokenizer) for description in descriptions]
     return dialogue, situation_labels
 
+def duplication_in_label(labels: List[str]) -> List[str]:
+    """
+    This function checks the duplication of the situation label.
+    """
+    label_counts = Counter(labels).items()
+    duplicated_labels = {label: count for label, count in label_counts if count > 1}
+    return duplicated_labels
+
 
 def match_situation(args, tokenizer) -> List[dict]:
     """ Match conversation with situation label. """
     dataset = []
+    situation_duplication = []
     dialogue, situation_labels = load_dataset(args, tokenizer)
     for situation_label, persona in situation_labels.items():
-        situation_label = situation_label.replace("(", r"\(")
+        table = str.maketrans({"(":r"\(", ")": r"\)"})
+        situation_label = situation_label.translate(table)
+
 
         is_contain = lambda text: dialogue[dialogue["상황"].str.contains(text)]
         is_not_contain = lambda text: dialogue[~dialogue["대분류"].str.contains(text)]
 
         situation = is_contain(situation_label)
+        situation_duplication.extend(situation['상황'].unique().tolist())
+
         pprint(situation['상황'].unique())
         top_level = is_contain(situation_label)["대분류"].iloc[0]
-        candidates = is_not_contain(top_level)["번역문"].to_list()
+        candidates = is_not_contain(top_level)["번역문"].to_list() # negative sampling for next utterance
         conversations = situation.groupby("Set Nr.")["번역문"].apply(list).tolist()
 
         for conversation in conversations:
@@ -115,6 +129,9 @@ def match_situation(args, tokenizer) -> List[dict]:
                 )
             dialogue_entry = {"personality": persona, "utterances": utterances}
             dataset.append(dialogue_entry)
+
+    duplication = duplication_in_label(situation_duplication)
+    print(json.dumps(duplication, indent=3, ensure_ascii=False))
     return dataset
 
 def match_situation_by_persona(args, tokenizer) -> List[dict]:
@@ -126,7 +143,9 @@ def match_situation_by_persona(args, tokenizer) -> List[dict]:
     dataset = []
     dialogue, situation_labels = load_dataset(args, tokenizer)
     for situation_label, persona in situation_labels.items():
-        situation_label = situation_label.replace("(", r"\(")
+        table = str.maketrans({"(": r"\(", ")": r"\)"})
+        situation_label = situation_label.translate(table)
+        # situation_label = situation_label.replace("(", r"\(")
 
         is_contain = lambda text: dialogue[dialogue["상황"].str.contains(text)]
         is_not_contain = lambda text: dialogue[~dialogue["대분류"].str.contains(text)]
