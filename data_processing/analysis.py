@@ -48,6 +48,8 @@ class Dataset:
             self.data = json.load(fp)
         self.train = self.data['train']
         self.valid = self.data['valid']
+        self.name = Path(self.path).stem
+
 
     def num_of_dialogue(self):
         '''Get number of persona'''
@@ -77,15 +79,25 @@ class Dataset:
         return f"Train: {self.count_words(self.train)}, Valid: {self.count_words(self.valid)}"
 
 
-#%%
-class Dataset:
-    def __init__(self, path) -> None:
-        self.path = path
-#%%
 
-
+#%%
 situation_chat = Dataset('../data/situationchat_original.json')
+# situation_chat_augmented = Dataset('../data/situationchat_original(augmented).json')
 persona_chat = Dataset('../data/personachat_self_original.json')
+
+
+datasets = [situation_chat, persona_chat]
+#%%
+
+for dataset in datasets:
+    print(f"{dataset.name}")
+    print(f"num_of_dialogue : {dataset.num_of_dialogue()}",
+          f"num_of_utterance : {dataset.num_of_utterance()}",
+          f"average_turns : {dataset.average_turns()}",
+          # TODO: augmented dataset can not work number of word because of number of dialogues
+          f"num_of_word: {dataset.num_of_word()}",
+          sep='\n')
+    print('-'*20)
 
 #%%
 import json
