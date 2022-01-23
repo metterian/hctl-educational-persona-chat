@@ -44,11 +44,13 @@ class Dataset:
     path: str
 
     def __post_init__(self):
-        with open(self.path) as fp:
+        path = Path(self.path)
+        with path.open() as fp:
             self.data = json.load(fp)
         self.train = self.data['train']
         self.valid = self.data['valid']
-        self.name = Path(self.path).stem
+        # self.name = Path(self.path).stem
+        self.name = path.stem
 
 
     def num_of_dialogue(self):
