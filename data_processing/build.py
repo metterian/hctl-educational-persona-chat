@@ -6,7 +6,6 @@ import os, getpass
 import random
 import spacy
 from tqdm import tqdm
-from setproctitle import setproctitle
 from argparse import ArgumentParser
 from utils import get_paradir_path, space_before_eos
 from pprint import pprint
@@ -186,7 +185,7 @@ def build():
     parser.add_argument("--proc_title", type=str, default=f"{getpass.getuser()}_persona", help="Name process ID title. ")
     args = parser.parse_args()
 
-    set_config(args)
+    # set_config(args)
     tokenizer = load_tokenizer(args)
     # preprocess_dataset(args, tokenizer)
     dataset = match_situation(args, tokenizer)
