@@ -16,3 +16,6 @@ afl_metrics_candidate/
 afl_metrics_cola/
 outputs/
 data/situationchat_original(augmented).json
+
+#data
+data/situationchat_*
