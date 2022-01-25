@@ -299,10 +299,6 @@
         "I am asking another tourist for a photo shoot.",
         "I'm on a trip."
     ],
-    "체크인/체크아웃할 때": [
-        "I'm checking in or checking out.",
-        "I'm talking to the hotel staff."
-    ],
     "다이어트에는 무슨 운동이 좋은지 대화하는 상황": [
         "I'm on a diet.",
         "I want to exercise."
@@ -746,12 +742,12 @@
         "The product I bought is being delivered.",
         "The delivery package isn't coming."
     ],
-    "체크인 / 체크아웃할 때": [
+    "체크인\\s*/\\s* 체크아웃할 때": [
         "I want to check in my room.",
         "I want to check out.",
         "I want to pay for the items I use."
     ],
-    "^물건 찾기": [
+    "^물건 찾기, 물건 고르기": [
         "I'm going to ask the staff where this is.",
         "There's nothing I'm looking for.",
         "I don't know what to choose."
@@ -878,11 +874,6 @@
         "I'm going to buy souvenirs.",
         "We are going to travel by plane.",
         "We are trying to schedule a trip during the off-season."
-    ],
-    "체크인/체크아웃 할 때": [
-        "I applied for breakfast at the hotel.",
-        "I made a reservation for a double room.",
-        "I'm waiting for my turn."
     ],
     "근황을 물을 때": [
         "I'm at the bus stop.",

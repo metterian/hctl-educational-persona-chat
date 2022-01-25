@@ -1,0 +1,11 @@
+python -m torch.distributed.launch --nproc_per_node=4 ./train.py \
+--dataset_path "data/situationchat_original.json" \
+--dataset_cache "situationchat_original_dataset_cache_GPT2Tokenizer" \
+--model_checkpoint "microsoft/DialoGPT-large" \
+--gradient_accumulation_steps=4 \
+--max_history=3 \
+--n_epochs=2 \
+--num_candidates=4 \
+--personality_permutations=4 \
+--train_batch_size=4 \
+--valid_batch_size=4

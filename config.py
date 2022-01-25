@@ -28,4 +28,3 @@ class ChatConfig:
     files: Files
     params: Params
     setting: Setting
-

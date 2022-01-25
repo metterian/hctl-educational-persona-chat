@@ -76,7 +76,7 @@ def load_dataset(args, tokenizer):
         situation: ['<speaker1>','<speaker2>','<speaker1>','<speaker2>']
     """
     # dataset reload
-    dialogue = load_excel("data/translation_eng_kor_eos.xlsx", args)
+    dialogue = load_excel("data/translation_eng_kor_eos(fixed).xlsx", args)
     # load situation labels
     situation_data_path = args.situation_data if args.situation_data else "data_processing/situation_label.json"
     situation_label_path = get_paradir_path(
@@ -122,6 +122,8 @@ def match_situation(args, tokenizer) -> List[dict]:
 
         for conversation in conversations:
             utterances = []
+            if len(conversation) != 4:
+                continue
             for i in range(len(conversation) - 1):
                 candidate = sample_candidate(candidates) + [conversation[i + 1]]
                 utterances.append(
@@ -130,8 +132,6 @@ def match_situation(args, tokenizer) -> List[dict]:
             dialogue_entry = {"personality": persona, "utterances": utterances}
             dataset.append(dialogue_entry)
 
-    duplication = duplication_in_label(situation_duplication)
-    print(json.dumps(duplication, indent=3, ensure_ascii=False))
     return dataset
 
 def match_situation_by_persona(args, tokenizer) -> List[dict]:
@@ -163,6 +163,7 @@ def match_situation_by_persona(args, tokenizer) -> List[dict]:
                 utterances.append(
                     {"candidates": candidate, "history": conversation[: i + 1]}
                 )
+            assert utterances == [], 'no match situation'
             dialogue_entry['utterances'] += utterances
         dataset.append(dialogue_entry)
     return dataset
@@ -171,7 +172,8 @@ def match_situation_by_persona(args, tokenizer) -> List[dict]:
 def save_dataset(file_name :str , dataset: dict, shuffle=False, split=0.8):
     """ Shuffle and split the dataset. """
     random.shuffle(dataset) if shuffle else None
-    index = int(len(dataset) * split)
+    # index = int(len(dataset) * split)
+    index = len(dataset) - 1000
     dataset_file = {"train": dataset[:index], "valid": dataset[index:]}
     with open(f"data/{file_name}.json", "w+") as fp:
         json.dump(dataset_file, fp, indent=4)
@@ -190,7 +192,7 @@ def build():
     tokenizer = load_tokenizer(args)
     # preprocess_dataset(args, tokenizer)
     dataset = match_situation(args, tokenizer)
-    save_dataset(file_name = "situationchat_original(augmented)", dataset = dataset, shuffle=True)
+    save_dataset(file_name = "situationchat_original(augmented)", dataset = dataset)
     return dataset
 
 

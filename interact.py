@@ -97,7 +97,7 @@ def sample_sequence(personality, history, tokenizer, model, cfg, current_output=
 cs = ConfigStore.instance()
 cs.store(name='chat_config', node=ChatConfig)
 
-@hydra.main(config_path="conf", config_name="situationchat_original")
+@hydra.main(config_path="conf", config_name="situationchat_original_dialGPT")
 def run(cfg: ChatConfig) -> None:
     print(cfg.params)
     # parser = ArgumentParser()

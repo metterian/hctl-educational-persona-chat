@@ -23,7 +23,9 @@ from utils import get_dataset, make_logdir
 
 from setproctitle import setproctitle
 
-setproctitle('persona_joon')
+setproctitle('Chatbot_yks')
+
+
 SPECIAL_TOKENS = ["<bos>", "<eos>", "<speaker1>", "<speaker2>", "<pad>"]
 ATTR_TO_SPECIAL_TOKEN = {'bos_token': '<bos>', 'eos_token': '<eos>', 'pad_token': '<pad>',
                          'additional_special_tokens': ['<speaker1>', '<speaker2>']}
@@ -116,7 +118,6 @@ def get_data_loaders(args, tokenizer):
     logger.info("Valid dataset (Batch, Candidates, Seq length): {}".format(valid_dataset.tensors[0].shape))
     return train_loader, valid_loader, train_sampler, valid_sampler
 
-
 def train():
     parser = ArgumentParser()
     parser.add_argument("--dataset_path", type=str, default="data/situationchat_original_augmented_dialgpt.json", help="Path or url of the dataset. If empty download from S3.")
@@ -124,8 +125,8 @@ def train():
     parser.add_argument("--model_checkpoint", type=str, default="gpt2", help="Path, url or short name of the model")
     parser.add_argument("--num_candidates", type=int, default=2, help="Number of candidates for training")
     parser.add_argument("--max_history", type=int, default=2, help="Number of previous exchanges to keep in history")
-    parser.add_argument("--train_batch_size", type=int, default=12, help="Batch size for training")
-    parser.add_argument("--valid_batch_size", type=int, default=12, help="Batch size for validation")
+    parser.add_argument("--train_batch_size", type=int, default=8, help="Batch size for training")
+    parser.add_argument("--valid_batch_size", type=int, default=8, help="Batch size for validation")
     parser.add_argument("--gradient_accumulation_steps", type=int, default=8, help="Accumulate gradients on several steps")
     parser.add_argument("--lr", type=float, default=6.25e-5, help="Learning rate")
     parser.add_argument("--lm_coef", type=float, default=1.0, help="LM loss coefficient")
@@ -154,16 +155,37 @@ def train():
         torch.distributed.init_process_group(backend='nccl', init_method='env://')
 
     logger.info("Prepare tokenizer, pretrained model and optimizer.")
-    tokenizer_class = GPT2Tokenizer if "gpt2" in args.model_checkpoint else OpenAIGPTTokenizer # cant use Autotokenizer because checkpoint could be a Path
-    # tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
-    tokenizer = tokenizer_class.from_pretrained('microsoft/DialoGPT-large')
-    # tokenizer = AutoTokenizer.from_pretrained('microsoft/DialoGPT-large')
+
+    def select_models(model_checkpoint : str):
+        if model_checkpoint == 'gpt2':
+            return GPT2DoubleHeadsModel, GPT2Tokenizer
+        elif model_checkpoint == 'gpt2-medium':
+            return GPT2DoubleHeadsModel, GPT2Tokenizer
+        elif model_checkpoint == 'gpt2-large':
+            return GPT2DoubleHeadsModel, GPT2Tokenizer
+        elif model_checkpoint == 'openai-gpt':
+            return OpenAIGPTDoubleHeadsModel, OpenAIGPTTokenizer
+        elif model_checkpoint == 'microsoft/DialoGPT-small':
+            return GPT2DoubleHeadsModel, GPT2Tokenizer
+        elif model_checkpoint == 'microsoft/DialoGPT-medium':
+            return GPT2DoubleHeadsModel, GPT2Tokenizer
+        elif model_checkpoint == 'microsoft/DialoGPT-large':
+            return GPT2DoubleHeadsModel, GPT2Tokenizer
+        else:
+            raise ValueError("Model checkpoint %s not recognized" % model_checkpoint)
 
 
+    # tokenizer_class = GPT2Tokenizer if "gpt2" in args.model_checkpoint else OpenAIGPTTokenizer # cant use Autotokenizer because checkpoint could be a Path
+    # model_class = GPT2DoubleHeadsModel if "gpt2" in args.model_checkpoint else OpenAIGPTDoubleHeadsModel
+    model_class, tokenizer_class = select_models(args.model_checkpoint)
+    tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
+    model = model_class.from_pretrained(args.model_checkpoint)
 
-    model_class = GPT2DoubleHeadsModel if "gpt2" in args.model_checkpoint else OpenAIGPTDoubleHeadsModel
+
+    # tokenizer = tokenizer_class.from_pretrained('microsoft/DialoGPT-large')
+
+
     # model = model_class.from_pretrained(args.model_checkpoint)
-    model = GPT2DoubleHeadsModel.from_pretrained('microsoft/DialoGPT-large')
     model.to(args.device)
     # Add special tokens if they are not already added
     add_special_tokens_(model, tokenizer)
